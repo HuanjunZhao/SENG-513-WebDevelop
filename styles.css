@@ -1,0 +1,133 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+}
+
+
+:root {
+    --height: 90vh;
+}
+
+.table {
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    background-color: #f1b06c;
+}
+.grid {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(15, calc(var(--height)/15));
+    grid-template-rows: repeat(15, calc(var(--height)/15));
+    
+}
+
+.grid.x .griditem:not(.x):not(.o):hover {
+    content: '';
+    width: 80%;
+    height: 80%;
+    background-color:black;
+    border-radius: 50%;
+}
+
+.grid.o .griditem:not(.x):not(.o):hover {
+    content: '';
+    width: 80%;
+    height: 80%;
+    background-color:white;
+    border-radius: 50%;
+}
+
+.griditem {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+
+}
+
+.lines {
+    margin-top: -100vh;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(14, calc(var(--height)/15));
+    grid-template-rows: repeat(14, calc(var(--height)/15));
+    
+}
+
+.line {
+    width:100%;
+    height:100%;
+    border: 1px solid black;
+}
+
+
+
+.griditem.x {
+    content: '';
+    width: 80%;
+    height: 80%;
+    background-color: black;
+    border-radius: 50%;
+    cursor: not-allowed;
+}
+
+.griditem.o {
+    content: '';
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    border-radius: 50%;
+    cursor: not-allowed;
+}
+
+.winning-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .9);
+    justify-content: center;
+    align-items: center; 
+    color: white;
+    font-size: 4rem;
+    flex-direction: column;
+}
+
+.winning-message button {
+    font-size: 3rem;
+    background-color: white;
+    border: 1px solid black;
+    padding:  .25em .5em;
+    cursor: pointer;
+}
+
+.winning-message button:hover {
+    background-color: black;
+    color: white;
+    border-color: white;
+}
+
+.winning-message.show {
+    display: flex;
+}
