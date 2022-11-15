@@ -9,10 +9,59 @@ body {
 :root {
     --height: 90vh;
 }
-
-.table {
+.all {
     width: 100vw;
     height: 100vh;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    display: flex;
+}
+
+.skill {
+    display: flex;
+    width: 10%;
+    height: 100%;
+    justify-content: center;
+    align-items: center; 
+    background-color: darkkhaki;
+    flex-direction: column;
+}
+
+
+.skill button {
+    display: none;
+    margin-bottom: 50%;
+    background-color: white;
+    border: 1px solid black;
+    padding:  .25em .5em;
+    cursor: pointer;
+}
+
+.skill button.show {
+    display: flex;
+}
+
+.skill button:hover {
+    background-color: black;
+    color: white;
+    border-color: white;
+}
+
+.chat {
+    width: 20%;
+    height: 100%;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    background-color: greenyellow;
+}
+
+.table {
+    width: 70%;
+    height: 100%;
     justify-content: center;
     align-content: center;
     justify-items: center;
@@ -20,12 +69,13 @@ body {
     background-color: #f1b06c;
 }
 .grid {
+    position: relative;
     display: grid;
     justify-content: center;
     align-content: center;
     justify-items: center;
     align-items: center;
-    z-index: 0;
+    z-index: 100;
     width: 100%;
     height: 100%;
     grid-template-columns: repeat(15, calc(var(--height)/15));
@@ -59,6 +109,7 @@ body {
     cursor: pointer;
 
 }
+
 
 .lines {
     margin-top: -100vh;
@@ -99,9 +150,24 @@ body {
     cursor: not-allowed;
 }
 
+.curtain {
+    position: relative;
+    margin-top: -100vh;
+    display: none;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.curtain.show {
+    display: flex;
+}
+
 .winning-message {
     display: none;
     position: fixed;
+    z-index: 1000;
     top: 0;
     left: 0;
     right: 0;
