@@ -222,7 +222,7 @@ body {
 
 .curtain {
     position: relative;
-    margin-top: -100vh;
+    margin-left: -100%;
     display: none;
     z-index: 1;
     width: 100%;
