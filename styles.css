@@ -59,27 +59,25 @@ body {
     background-color: greenyellow;
 }
 
+
 .table {
-    width: 70%;
-    height: 100%;
+    display: flex;
+    width: 70vw;
+    height: 100vh;
     justify-content: center;
-    align-content: center;
-    justify-items: center;
     align-items: center;
     background-color: #f1b06c;
 }
 .grid {
-    position: relative;
     display: grid;
     justify-content: center;
     align-content: center;
-    justify-items: center;
-    align-items: center;
+    margin-right: -100%;
     z-index: 100;
     width: 100%;
     height: 100%;
-    grid-template-columns: repeat(15, calc(var(--height)/15));
-    grid-template-rows: repeat(15, calc(var(--height)/15));
+    grid-template-columns: repeat(15, 6vh);
+    grid-template-rows: repeat(15, 6vh);
     
 }
 
@@ -92,6 +90,7 @@ body {
 }
 
 .grid.o .griditem:not(.x):not(.o):hover {
+    
     content: '';
     width: 80%;
     height: 80%;
@@ -103,24 +102,21 @@ body {
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+    margin: 12.5%;
     cursor: pointer;
 
 }
 
 
 .lines {
-    margin-top: -100vh;
     display: grid;
     justify-content: center;
     align-content: center;
     z-index: 0;
     width: 100%;
     height: 100%;
-    grid-template-columns: repeat(14, calc(var(--height)/15));
-    grid-template-rows: repeat(14, calc(var(--height)/15));
+    grid-template-columns: repeat(14, 6vh);
+    grid-template-rows: repeat(14, 6vh);
     
 }
 
@@ -128,6 +124,80 @@ body {
     width:100%;
     height:100%;
     border: 1px solid black;
+}
+
+/*screen for phone*/
+@media only screen and (max-width: 912px) {
+    .all {
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        align-content: center;
+        justify-items: center;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+    .skill {
+        width: 100%;
+        height: 10%;
+        background-color: darkkhaki;
+        display: flex;
+        flex-direction: row;
+    
+    }
+    
+    .skill button {
+        display: none;
+        background-color: white;
+        border: 1px solid black;
+        padding:  .25em .5em;
+        cursor: pointer;
+        margin-bottom: 0%;
+        margin-left: 10%;
+    }
+    
+    .chat {
+        width: 100%;
+        height: 20%;
+        justify-content: center;
+        align-content: center;
+        justify-items: center;
+        align-items: center;
+        background-color: greenyellow;
+    }
+    .table {
+        display: flex;
+        width: 100vw;
+        height: 70vh;
+        justify-content: center;
+        align-items: center;
+        background-color: #f1b06c;
+    }
+    .grid {
+        display: grid;
+        justify-content: center;
+        align-content: center;
+        margin-right: -100%;
+        z-index: 100;
+        width: 100%;
+        height: 100%;
+        grid-template-columns: repeat(15, 6vw);
+        grid-template-rows: repeat(15, 6vw);
+       
+    }
+    .lines {
+        display: grid;
+        justify-content: center;
+        align-content: center;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        grid-template-columns: repeat(14, 6vw);
+        grid-template-rows: repeat(14, 6vw);
+        
+    }
+
 }
 
 
