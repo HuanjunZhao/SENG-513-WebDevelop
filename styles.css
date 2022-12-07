@@ -286,8 +286,7 @@ body {
     transform: translate(-50%, -50%);
 }
 
-.online,
-.local {
+.selectbutton {
     /*每个按钮应在页面中占有自己的位置，因此选择相对定位*/
     position: relative;
     /*使元素填满父级元素*/
@@ -309,8 +308,7 @@ body {
     padding: 5px;
 }
 
-.online span,
-.local span {
+.selectbutton span {
     /*同样文字也应每个按钮中占有固定的位置，选择相对定位*/
     position: relative;
     /*使元素填满父级元素*/
@@ -332,7 +330,7 @@ body {
     background-color: black;
 }
 
-.online::before, .local::before, .online::after, .local::after {
+.selectbutton::before, .selectbutton::after {
     position: absolute;
     content: "";
     background: transparent;
@@ -342,7 +340,7 @@ body {
     transition: 0.35s;
 }
 
-.online::before, .local::before{
+.selectbutton::before{
     /*使子盒子与父盒子上边缘及左边缘距离为0，使子盒子置于父盒子左上角*/
     top: 0; left: 0;
     /*为方便观察设置为红色，最终效果中设置为黑色*/
@@ -351,7 +349,7 @@ body {
     border-top: 1px solid black;
 }
 
-.online::after, .local::after{
+.selectbutton::after{
     /*使子盒子与父盒子下边缘及右边缘距离为0，使子盒子置于父盒子右下角*/
     bottom: 0; 
     right: 0;
@@ -360,7 +358,7 @@ body {
     border-bottom: 1px solid black;
 }
 
-.online:hover::before, .local:hover::before, .online:hover::after, .local:hover::after {
+.selectbutton:hover::before, .selectbutton:hover::after {
     width: 99%;
     height: 98%;
 }
