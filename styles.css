@@ -1,0 +1,375 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+
+:root {
+    --height: 90vh;
+}
+
+.all {
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    display: flex;
+}
+
+.skill {
+    display: flex;
+    width: 10%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: darkkhaki;
+    flex-direction: column;
+}
+
+
+.skill button {
+    display: none;
+    margin-bottom: 50%;
+    background-color: white;
+    border: 1px solid black;
+    padding: .25em .5em;
+    cursor: pointer;
+}
+
+.skill button.show {
+    display: flex;
+}
+
+.skill button:hover {
+    background-color: black;
+    color: white;
+    border-color: white;
+}
+
+.chat {
+    width: 20%;
+    height: 100%;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    background-color: greenyellow;
+}
+
+
+.table {
+    display: flex;
+    width: 70vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: #f1b06c;
+}
+
+.grid {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    margin-right: -100%;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(15, 6vh);
+    grid-template-rows: repeat(15, 6vh);
+
+}
+
+.grid.x .griditem:not(.x):not(.o):hover {
+    content: '';
+    width: 80%;
+    height: 80%;
+    background-color: black;
+    border-radius: 50%;
+}
+
+.grid.o .griditem:not(.x):not(.o):hover {
+
+    content: '';
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.griditem {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    margin: 12.5%;
+    cursor: pointer;
+
+}
+
+
+.lines {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(14, 6vh);
+    grid-template-rows: repeat(14, 6vh);
+
+}
+
+.line {
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+}
+
+/*screen for phone*/
+@media only screen and (max-width: 912px) {
+    .all {
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        align-content: center;
+        justify-items: center;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .skill {
+        width: 100%;
+        height: 10%;
+        background-color: darkkhaki;
+        display: flex;
+        flex-direction: row;
+
+    }
+
+    .skill button {
+        display: none;
+        background-color: white;
+        border: 1px solid black;
+        padding: .25em .5em;
+        cursor: pointer;
+        margin-bottom: 0%;
+        margin-left: 10%;
+    }
+
+    .chat {
+        width: 100%;
+        height: 20%;
+        justify-content: center;
+        align-content: center;
+        justify-items: center;
+        align-items: center;
+        background-color: greenyellow;
+    }
+
+    .table {
+        display: flex;
+        width: 100vw;
+        height: 70vh;
+        justify-content: center;
+        align-items: center;
+        background-color: #f1b06c;
+    }
+
+    .grid {
+        display: grid;
+        justify-content: center;
+        align-content: center;
+        margin-right: -100%;
+        z-index: 100;
+        width: 100%;
+        height: 100%;
+        grid-template-columns: repeat(15, 6vw);
+        grid-template-rows: repeat(15, 6vw);
+
+    }
+
+    .lines {
+        display: grid;
+        justify-content: center;
+        align-content: center;
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        grid-template-columns: repeat(14, 6vw);
+        grid-template-rows: repeat(14, 6vw);
+
+    }
+
+}
+
+
+
+.griditem.x {
+    content: '';
+    width: 80%;
+    height: 80%;
+    background-color: black;
+    border-radius: 50%;
+    cursor: not-allowed;
+}
+
+.griditem.o {
+    content: '';
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    border-radius: 50%;
+    cursor: not-allowed;
+}
+
+.curtain {
+    position: relative;
+    margin-left: -100%;
+    display: none;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.curtain.show {
+    display: flex;
+}
+
+.winning-message {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .9);
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 4rem;
+    flex-direction: column;
+}
+
+.winning-message button {
+    font-size: 3rem;
+    background-color: white;
+    border: 1px solid black;
+    padding: .25em .5em;
+    cursor: pointer;
+}
+
+.winning-message button:hover {
+    background-color: black;
+    color: white;
+    border-color: white;
+}
+
+.winning-message.show {
+    display: flex;
+}
+
+.btn-holder {
+    position: absolute ;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.online,
+.local {
+    /*每个按钮应在页面中占有自己的位置，因此选择相对定位*/
+    position: relative;
+    /*使元素填满父级元素*/
+    display: inline-block;
+    /*div的width/height设置为auto,那么表示的这个div的所有部分(内容、边框、内边距等的距离加起来)为父元素宽度*/
+    width: auto;
+    height: auto;
+    /*方便观察设置背景色为黑色，演示效果中设置为透明transparent*/
+    background-color: transparent;
+    border: none;
+    /*鼠标悬浮于其上时显示为十字光标*/
+    cursor: crosshair;
+    color: rgb(255, 255, 255);
+    transition: 0.2s 0.1s;
+    margin: 0 auto;
+    min-width: 100px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 5px;
+}
+
+.online span,
+.local span {
+    /*同样文字也应每个按钮中占有固定的位置，选择相对定位*/
+    position: relative;
+    /*使元素填满父级元素*/
+    display: inline-block;
+    /*设置字体大小*/
+    font-size: 14px;
+    /*设置文字为粗体*/
+    font-weight: bold;
+    /*设置文字间的间距*/
+    letter-spacing: 2px;
+    /*定义为大写字母*/
+    text-transform: uppercase;
+    /*调整子元素在父元素中的位置*/
+    padding: 15px 20px;
+    /*设置从一个属性过渡到另一个属性的时间*/
+    transition: 0.3s;
+    color: white;
+    transition: 0.2s;
+    background-color: black;
+}
+
+.online::before, .local::before, .online::after, .local::after {
+    position: absolute;
+    content: "";
+    background: transparent;
+    z-index: 2;
+    /*设置before及after两个盒子的大小*/
+    width: 10%; height: 25%;
+    transition: 0.35s;
+}
+
+.online::before, .local::before{
+    /*使子盒子与父盒子上边缘及左边缘距离为0，使子盒子置于父盒子左上角*/
+    top: 0; left: 0;
+    /*为方便观察设置为红色，最终效果中设置为黑色*/
+    /*分别设置上边框及左边框*/
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+}
+
+.online::after, .local::after{
+    /*使子盒子与父盒子下边缘及右边缘距离为0，使子盒子置于父盒子右下角*/
+    bottom: 0; 
+    right: 0;
+    /*分别设置下边框及底边框*/
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.online:hover::before, .local:hover::before, .online:hover::after, .local:hover::after {
+    width: 99%;
+    height: 98%;
+}
+
+.title{
+    font-size: 50px;
+    font-weight: 800;
+    color: black;
+    text-align: center;
+    margin-top: 200px;
+    font-family: 'Courier New', Courier, monospace;
+}
