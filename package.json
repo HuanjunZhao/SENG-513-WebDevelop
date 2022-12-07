@@ -1,0 +1,29 @@
+{
+  "name": "seng-513-webdevelop",
+  "version": "1.0.0",
+  "description": "multiplayer gobang",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HuanjunZhao/SENG-513-WebDevelop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HuanjunZhao/SENG-513-WebDevelop/issues"
+  },
+  "homepage": "https://github.com/HuanjunZhao/SENG-513-WebDevelop#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.5.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
