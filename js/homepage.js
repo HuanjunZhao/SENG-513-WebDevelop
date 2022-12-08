@@ -5,19 +5,19 @@ var userid = getval.split('=')[1];
 
 document.getElementById("user").innerHTML = "Hello, User "+userid;
 
-function checkFriendid() {
-    var friend = document.getElementById("friendid").value;
-    if ((friend.length == 0)) {
+function checkRoomid() {
+    var roomid = document.getElementById("roomid").value;
+    if ((roomid.length == 0)) {
         alert("Friend ID can't be empty");
         return false;
     }
-    // send id to server to check if the user is exist
-    // if not exist, alert "User not found"
+    // send id to server to check if the room is exist
+    // if not exist, alert "Room not found"
     
-    // socket.emit("friend", friend)
+    // socket.emit("room", room)
     // socket.on("checkexist", message => {
     //     if (message == "not found") {
-    //         alert("User not found");
+    //         alert("Room not found");
     //         return false;
     //     }
     // })
@@ -29,25 +29,24 @@ function getForm(){
     document.getElementById('join').style.display = 'none';
     let form = document.querySelector('form');
     form.style.top = '55%';
-    document.getElementById('').style.display = 'block';
 }
 
-function getFriend(){
-    if(checkFriendid()){
-        var friend = document.getElementById("friendid").value;
-        // send friend id to server to check if the user has a game or not
-        // if has, check the game status
-        // if two players are ready, game is full, wait
+function getRoom(){
+    if(checkRoomid()){
+        var roomid = document.getElementById("roomid").value;
+        // send room id to server to check if the room is exist
+        // if has, check the room status
+        // if two players are ready, room is full
         // if one player is ready, game is ready, join
     
-        // socket.emit("friendgame", friend)
-        // socket.on("checkfriend", message => {
+        // socket.emit("roomgame", room)
+        // socket.on("checkroom", message => {
         //     if (message == "full") {
-        //         alert("Game is full, please wait");
+        //         alert("Game is full");
         //         return;
         //     }
         //     if (message == "ready") {
-                window.location.href = "game.html?player1="+userid+"&player2="+friend;
+                window.location.href = "game.html?player1="+userid+"&roomid="+roomid;
         //     }
         // })
     }
@@ -69,5 +68,9 @@ function getRandom(){
 }
 
 function logOut(){
-    window.location.href = "login.html";
+    window.location.href = "landing.html";
+}
+
+function getProfile(){
+    window.location.href = "profile.html?userid="+userid;
 }
