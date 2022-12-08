@@ -29,7 +29,19 @@ function getInput() {
         var userid = document.getElementById("ID").value;
         var pass = document.getElementById("pass").value;
         // send information to server to check if the user is valid
-        window.location.href = "homepage.html?userid=" + userid;
+        // if the user is valid, go to the homepage
+        
+        // socket.emit('login', {userid: userid, pass: pass});
+        // socket.on('login', function(data){
+        //     if(data == 'valid'){
+                   window.location.href = "homepage.html?userid=" + userid;
+        //     }
+        //     else{
+        //         alert("User ID or password is incorrect");
+        //         return;
+        //     }
+        // });
+        
     }
     else
         return;
