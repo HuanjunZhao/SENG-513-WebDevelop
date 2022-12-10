@@ -325,3 +325,7 @@ function setHover(){
         board.classList.add(O_CLASS)
     }
 }
+
+function getBack(){
+    window.location.href = "landing.html";
+}
