@@ -655,5 +655,7 @@ td {
     display: flex;
     flex-flow: column;
     word-wrap:normal;
-    word-break:keep-all
+    word-break:break-all;
+    overflow-x:visible;
+    overflow-y:scroll;
 }

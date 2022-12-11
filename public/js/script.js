@@ -340,14 +340,13 @@ socket.on('chat',(player,message)=>{
     console.log("receving chat form "+player+":"+message );
     let msg = document.createElement("div");
     msg.className="chat_msg";
-    const content = document.createTextNode(player +": "+message);
-    msg.appendChild(content);
+    msg.innerHTML = "<b>"+ player +"</b>" +": "+message;
     document.querySelector('.chat_log').appendChild(msg);
 })
 function sendChatMsgListeners(){
     document.querySelector('[type=button][value=send]').addEventListener("click",function (){
         const message =  document.querySelector('.chat_box').value;
-        if(message != null || message.length > 0)socket.emit('chat',roomId,playerId,message);
+        if(message != null && message.length > 0)socket.emit('chat',roomId,playerId,message);
         document.querySelector('.chat_box').value = "";
     })
 };
