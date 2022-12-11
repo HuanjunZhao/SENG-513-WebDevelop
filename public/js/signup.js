@@ -1,3 +1,5 @@
+const socket = io();
+
 function checkUserid() {
     var str = document.getElementById("ID").value;
     if ((str.length == 0)) {
@@ -28,17 +30,16 @@ function getInput() {
         // if the user is exist, go back to the landing page
         // if the user is not exist, add the user to the database and go to the homepage
 
-        // socket.emit('signup', {userid: userid, pass: pass});
-        // socket.on('signup', function(data){
-        //     if(data == 'exist'){
-        //         alert("User ID already exists, please login");
-        //         window.location.href = "landing.html";
-        //     }
-        //     else{
-        //         alert("User ID is created");
-        window.location.href = "homepage.html?userid=" + userid;
-        //     }
-        // });
+        socket.emit('signup', { userid, pass });
+        socket.on('signupfeedback', function(data) {
+            if (data == 'exist') {
+                alert("User ID already exists, please login");
+                window.location.href = "landing.html";
+            } else {
+                alert("User ID is created");
+                window.location.href = "homepage.html?userid=" + userid;
+            }
+        });
     } else
         return;
 }
