@@ -82,6 +82,16 @@ io.on('connection', socket => {
         connections[playerIndex] = null;
         socket.broadcast.emit('player-connection', playerIndex);
     });
+
+
+
+    //chating
+    socket.on('chat',(room,player,message)=>{
+        console.log("receving chat form "+ room +"\n"+player+":"+message );
+        io.sockets.emit('chat',player,message);
+        // io.to(room).emit('chat',player,message); //should be change to code.
+    })
+
 });
 
 //-----------------------------------------------------------------------------------------
@@ -106,3 +116,6 @@ function randomName() {
 function randomRoomName() {
     this.newRoomName
 }
+
+
+
