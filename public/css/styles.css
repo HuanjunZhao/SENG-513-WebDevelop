@@ -650,3 +650,10 @@ td {
     background-color: black;
     border: 2px solid gainsboro;
 }
+.chat_log{
+    width: 100% ;
+    display: flex;
+    flex-flow: column;
+    word-wrap:normal;
+    word-break:keep-all
+}

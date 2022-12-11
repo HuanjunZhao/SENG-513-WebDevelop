@@ -342,7 +342,7 @@ socket.on('chat',(player,message)=>{
     msg.className="chat_msg";
     const content = document.createTextNode(player +": "+message);
     msg.appendChild(content);
-    document.querySelector('.message_log').appendChild(msg);
+    document.querySelector('.chat_log').appendChild(msg);
 })
 function sendChatMsgListeners(){
     document.querySelector('[type=button][value=send]').addEventListener("click",function (){
