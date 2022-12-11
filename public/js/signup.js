@@ -27,7 +27,7 @@ function getInput() {
         // send information to server to check if the user is exist
         // if the user is exist, go back to the landing page
         // if the user is not exist, add the user to the database and go to the homepage
-        
+
         // socket.emit('signup', {userid: userid, pass: pass});
         // socket.on('signup', function(data){
         //     if(data == 'exist'){
@@ -36,14 +36,13 @@ function getInput() {
         //     }
         //     else{
         //         alert("User ID is created");
-                   window.location.href = "homepage.html?userid=" + userid;
+        window.location.href = "homepage.html?userid=" + userid;
         //     }
         // });
-    }
-    else
+    } else
         return;
 }
 
 function getBack() {
-    window.location.href = "landing.html";
+    window.location.href = "index.html";
 }

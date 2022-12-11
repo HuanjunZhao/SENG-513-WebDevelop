@@ -3,7 +3,7 @@ var thisURL = document.URL;
 var getval = thisURL.split('?')[1];
 var userid = getval.split('=')[1];
 
-document.getElementById("user").innerHTML = "Hello, User "+userid;
+document.getElementById("user").innerHTML = "Hello, User " + userid;
 
 function checkRoomid() {
     var roomid = document.getElementById("roomid").value;
@@ -13,7 +13,7 @@ function checkRoomid() {
     }
     // send id to server to check if the room is exist
     // if not exist, alert "Room not found"
-    
+
     // socket.emit("room", room)
     // socket.on("checkexist", message => {
     //     if (message == "not found") {
@@ -24,21 +24,21 @@ function checkRoomid() {
     return true;
 }
 
-function getForm(){
+function getForm() {
     document.getElementById('findid').style.display = 'block';
     document.getElementById('join').style.display = 'none';
     let form = document.querySelector('form');
     form.style.top = '55%';
 }
 
-function getRoom(){
-    if(checkRoomid()){
+function getRoom() {
+    if (checkRoomid()) {
         var roomid = document.getElementById("roomid").value;
         // send room id to server to check if the room is exist
         // if has, check the room status
         // if two players are ready, room is full
         // if one player is ready, game is ready, join
-    
+
         // socket.emit("roomgame", room)
         // socket.on("checkroom", message => {
         //     if (message == "full") {
@@ -46,31 +46,30 @@ function getRoom(){
         //         return;
         //     }
         //     if (message == "ready") {
-                window.location.href = "game.html?player1="+userid+"&roomid="+roomid;
+        window.location.href = "game.html?player1=" + userid + "&roomid=" + roomid;
         //     }
         // })
-    }
-    else
+    } else
         return;
 }
 
 
-function getBack(){
+function getBack() {
     document.getElementById('findid').style.display = 'none';
     document.getElementById('join').style.display = 'inline';
 }
 
-function getRandom(){
+function getRandom() {
     // soket.emit("random", userid);
     // socket.on("random", enemyid => {
     //    window.location.href = "game.html?player1="+userid+"&player2="+enemyid;
     // })
 }
 
-function logOut(){
-    window.location.href = "landing.html";
+function logOut() {
+    window.location.href = "index.html";
 }
 
-function getProfile(){
-    window.location.href = "profile.html?userid="+userid;
+function getProfile() {
+    window.location.href = "profile.html?userid=" + userid;
 }

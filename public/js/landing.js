@@ -1,4 +1,4 @@
-function getLocalPage(){
+function getLocalPage() {
     window.location.href = "game.html?local=true";
 }
 
@@ -30,20 +30,19 @@ function getInput() {
         var pass = document.getElementById("pass").value;
         // send information to server to check if the user is valid
         // if the user is valid, go to the homepage
-        
+
         // socket.emit('login', {userid: userid, pass: pass});
         // socket.on('login', function(data){
         //     if(data == 'valid'){
-                   window.location.href = "homepage.html?userid=" + userid;
+        window.location.href = "homepage.html?userid=" + userid;
         //     }
         //     else{
         //         alert("User ID or password is incorrect");
         //         return;
         //     }
         // });
-        
-    }
-    else
+
+    } else
         return;
 }
 
@@ -54,7 +53,7 @@ function getBack() {
 
 }
 
-function getForm(){
+function getForm() {
     document.getElementById('login').style.display = 'block';
     document.getElementById('local').style.display = 'none';
     document.getElementById('signup').style.display = 'inline';

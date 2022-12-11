@@ -14,11 +14,10 @@ var rank = 0;
 //     document.getElementById("rank").innerHTML = rank;
 // })
 
-function logOut(){
-    window.location.href = "landing.html";
+function logOut() {
+    window.location.href = "index.html";
 }
 
-function getBack(){
-    window.location.href = "homepage.html?userid="+userid;
+function getBack() {
+    window.location.href = "homepage.html?userid=" + userid;
 }
-
