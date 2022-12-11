@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Home Page</title>
+</head>
+<body>
+    <img class="bgc" src="img/background.png" width="100%" height="100%" alt="" style="opacity: 0.7;">
+    <div class="info" id="user"></div>
+    <div class="user"></div>
+    <div class="btn-holder">
+        <button id="create" class="selectbutton" onclick=getForm()><span>Game with your friend!</span></button>
+        <button id="join" class="selectbutton" onclick=getRandom()><span>Random Game Matching!</span></button>
+    </div>
+    <form id="findid" style="display:none;">
+        <input type="text" name="roomid" id="roomid" placeholder="Room ID">
+        <input type="button" id="find" value="Find" onclick=javascrtpt:getRoom()>
+        <input type="button" id="back" value="Back" onclick=javascrtpt:getBack()>
+    </form>
+
+    <button id="logout" onclick="logOut()">Log out</button>
+    <a class="profile" id="profile" onclick=getProfile()>Check your profile</a>
+    <script src="js/homepage.js"></script>
+</body>
+</html>

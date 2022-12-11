@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Landing Page</title>
+</head>
+<body>
+    <img class="bgc" src="img/background.png" width="100%" height="100%" alt="" style="opacity: 0.7;">
+    <div class="title">Please Make A Selection</div>
+    <div class="btn-holder">
+        <button id="online" class="selectbutton" onclick=getForm()><span>Online Game</span></button>
+        <button id="local" class="selectbutton" onclick=getLocalPage()><span>Local Game</span></button>
+    </div>
+    <form id="login" style="display:none;">
+        <br>
+        <!-- <div class="form">User ID</div>
+        <br> -->
+        <input type="text" name="userid" id="ID" placeholder="User ID">
+        <br>
+        <br>
+        <!-- <div class="form">Password</div>
+        <br> -->
+        <input type="password" name="psw" id="pass" placeholder="Password">
+        <br>
+        <input type="button" id="login" value="Submit" onclick=javascrtpt:getInput()>
+        <input type="button" id="back" value="Back" onclick=javascrtpt:getBack()>
+    </form>
+    <a href="signup.html" class="signup" id="signup" style="display: none;">Don't have account? Sign up!</a>
+    <script src="js/landing.js"></script>
+</body>
+</html>
