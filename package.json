@@ -1,0 +1,21 @@
+{
+    "name": "513a3",
+    "version": "1.0.0",
+    "description": "SENG513 A3",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server",
+        "dev": "nodemon server"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cookie-parser": "^1.4.6",
+        "express": "^4.18.2",
+        "mongoose": "^6.7.3",
+        "socket.io": "^4.5.4"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.20"
+    }
+}
