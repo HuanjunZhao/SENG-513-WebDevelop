@@ -31,17 +31,15 @@ const userDetail = {
     }
     // let index = 0;
     //EACH INDEX MEANS A ROOM WITH HOWMANY PLAYERS
-let cunrrntPlayerinRoom = [0];
+let cunrrntPlayerinRoom = [];
 // how many rooms we have
 let roomCounter = 0;
 //log three room id
-let roomIDs = [null];
+let roomIDs = [];
 //log who is in which room
-let currentPeopleInRoom = [
-    [null, null, null]
-];
+let currentPeopleInRoom = [];
 // turn for each room
-let turn = [null];
+let turn = [];
 
 //Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -52,7 +50,7 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 const connections = [null];
 io.on('connection', socket => {
 
-//-------------------HANDLE_LOGIN-------------------
+    //-------------------HANDLE_LOGIN-------------------
     //new user sign up
     socket.on('signup', (data) => {
         const fs = require('fs');
@@ -73,8 +71,8 @@ io.on('connection', socket => {
         }
         const users = JSON.parse(file.toString());
         //check if user already exist
-        for(let i = 0; i < users.user.length; i++){
-            if(users.user[i].id === newUser.id){
+        for (let i = 0; i < users.user.length; i++) {
+            if (users.user[i].id === newUser.id) {
                 console.log("User already exist");
                 //send feedback 0 to client
                 socket.emit('signup', 0);
@@ -104,20 +102,64 @@ io.on('connection', socket => {
         //create new user
         const users = JSON.parse(file.toString());
         //check if user already exist
-        for(let i = 0; i < users.user.length; i++){
-            if(users.user[i].id === data.userid && users.user[i].password === data.pass){
+        for (let i = 0; i < users.user.length; i++) {
+            if (users.user[i].id === data.userid && users.user[i].password === data.pass) {
                 console.log("login success");
                 //send feedback 1 to client
-                socket.emit('login', {state: 1, id: data.userid});
+                socket.emit('login', { state: 1, id: data.userid });
                 return;
             }
         }
         //send feedback 0 to client
-        socket.emit('login', {state: 0, id: data.userid});
+        socket.emit('login', { state: 0, id: data.userid });
         return;
     })
 
-//-------------------AFTER_LOGIN-------------------
+
+    //-------------------MATCH_FRIEND-------------------
+
+
+    socket.on('currentRoom', (data) => {
+        console.log(data);
+        //check if room null
+        if (data[0] == '') {
+            socket.emit('status', '404');
+            return;
+        }
+        let gameIndex = roomIDs.indexOf(data[0]);
+        //check if room not exist
+        if (gameIndex == -1) {
+            roomIDs.push(data[0]);
+            roomCounter++;
+            cunrrntPlayerinRoom.push(1);
+            currentPeopleInRoom.push([data[1], null]);
+            turn.push(data[1]);
+            socket.emit('status', '200');
+            return;
+        }
+        //room already have one player
+        if (gameIndex > -1 && cunrrntPlayerinRoom[gameIndex] == 1) {
+            cunrrntPlayerinRoom[gameIndex]++;
+            currentPeopleInRoom[gameIndex][1] = data[1];
+            socket.emit('status', '201');
+            //gamestart(gameIndex);
+            return;
+        }
+        //room already have two player
+        if (gameIndex > -1 && cunrrntPlayerinRoom[gameIndex] == 2) {
+            socket.emit('status', '400');
+            return;
+        }
+    });
+
+    socket.on('canIstart', (data) => {
+        if (cunrrntPlayerinRoom[roomIDs.indexOf(data)] == 2) {
+            console.log("send data to all client");
+            gamestart(data);
+        }
+    });
+
+
     let playerIndex = -1;
     for (const i in connections) {
 
@@ -138,16 +180,33 @@ io.on('connection', socket => {
         socket.broadcast.emit('player-connection', playerIndex);
     });
 
+
+//-----------------------------------GAME_PLAY--------------------------------------------------
+    socket.on('placeStone', (data) => {
+        console.log(data);
+        io.emit('placeStone', data);
+    });
+
+    socket.on('swapTurns', (data) => {
+        io.emit('swapTurns', data);
+    });
+
+    socket.on('win', (data) => {
+        io.emit('win', data);
+    });
+
+    socket.on('draw', (data) => {
+        io.emit('draw', data);
+    });
+
+
 });
 
-//-----------------------------------------------------------------------------------------
 
-//function to generate random name
-function randomName() {
-    userName = names[Math.floor(Math.random() * 50)];
+//-----------------------------------FUNCTION--------------------------------------------------
+function gamestart(room) {
+    io.emit('gamestart', room);
 }
 
 
-function randomRoomName() {
-    this.newRoomName
-}
+
