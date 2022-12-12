@@ -32,10 +32,19 @@ window.onload = function() {
     roomid = url.searchParams.get("roomid");
     userid = url.searchParams.get("userid");
     yourturn = parseInt(url.searchParams.get("player"));
+    if(yourturn == 1){
+        console.log('you are player 1');
+        skill1.classList.add('show');
+        //skill2.classList.add('show');
+        skill3.classList.add('show');
+    }
+    if(yourturn == 2){
+        console.log('you are player 2');
+    }
     socket.emit('canIstart', roomid);
     console.log(roomid);
 };
-
+start();
 socket.on('gamestart', data => {
     console.log(data);
     console.log(roomid);
@@ -48,8 +57,6 @@ socket.on('gamestart', data => {
 });
 
 socket.on('placeStone', data => {
-    console.log(data.index);
-    console.log(data.currentClass);
     if (data.roomid == roomid){
         placeStone(data.index, data.currentClass);
     }
@@ -58,6 +65,28 @@ socket.on('placeStone', data => {
 socket.on('swapTurns', data => {
     if (data.roomid == roomid){
         swapTurns();
+        //show 3 skill buttons if it is your turn
+        if (xTurn && yourturn == 1) {
+            if(xSkill1 <3) skill1.classList.add('show');
+            if(xSkill2 <3) skill2.classList.add('show');
+            if(xSkill3 <3) skill3.classList.add('show');
+        }else if (!xTurn && yourturn == 2) {
+            if(oSkill1 <3) skill1.classList.add('show');
+            if(oSkill2 <3) skill2.classList.add('show');
+            if(oSkill3 <3) skill3.classList.add('show');
+        }
+        //remove 3 skill buttons if it is not your turn
+        if (xTurn && yourturn == 2) {
+            if(xSkill1 <3) skill1.classList.remove('show');
+            if(xSkill2 <3) skill2.classList.remove('show');
+            if(xSkill3 <3) skill3.classList.remove('show');
+            curtain.classList.remove('show')
+        }else if (!xTurn && yourturn == 1) {
+            if(oSkill1 <3) skill1.classList.remove('show');
+            if(oSkill2 <3) skill2.classList.remove('show');
+            if(oSkill3 <3) skill3.classList.remove('show');
+            curtain.classList.remove('show')
+        }
     }
 })
 
@@ -73,21 +102,48 @@ socket.on('draw', data => {
     }
 })
 
-start();
+
+socket.on('randAdd', data => {
+    if (data.roomid == roomid){
+        //place stone
+        gridElements[data.index].classList.add(data.currentClass)
+    }
+})
+
+
+socket.on('randRem', data => {
+    if (data.roomid == roomid){
+        //clear and add event listener
+        gridElements[data.index].classList.remove(data.opponentClass)
+        gridElements[data.index].removeEventListener('click', handleClick)
+        gridElements[data.index].addEventListener('click', handleClick, { once: true })
+    }
+})
+
+socket.on('invisible', data => {
+    if (data.roomid == roomid){
+        if(data.opponentClass == O_CLASS && yourturn == 2){
+            curtain.style.backgroundColor = data.color
+            curtain.classList.add('show')
+        }
+        if(data.opponentClass == X_CLASS && yourturn == 1){
+            curtain.style.backgroundColor = data.color
+            curtain.classList.add('show')
+        }
+    }
+})
+
 // restartButton.addEventListener('click', start)
 
 function start() {
     //initialize
-    xTurn = true
+    xTurn = true;
     xSkill1 = 0
     oSkill1 = 0
     xSkill2 = 0
     oSkill2 = 0
     xSkill3 = 0
     oSkill3 = 0
-    skill1.classList.add('show')
-    skill2.classList.add('show')
-    skill3.classList.add('show')
     gridElements.forEach(grid => {
             grid.classList.remove(X_CLASS)
             grid.classList.remove(O_CLASS)
@@ -122,8 +178,11 @@ function randAdd() {
         }
         //random
         var ran = placeable[Math.floor((Math.random() * placeable.length))];
-        //place stone
-        gridElements[ran].classList.add(X_CLASS)
+        socket.emit("randAdd", {
+            roomid: roomid,
+            index: ran,
+            currentClass: X_CLASS
+        })
     } else if (!xTurn && oSkill1 < 3) {
         //consume sill counter
         oSkill1 = oSkill1 + 1
@@ -136,8 +195,11 @@ function randAdd() {
         }
         //random
         var ran = placeable[Math.floor((Math.random() * placeable.length))];
-        //place stone
-        gridElements[ran].classList.add(O_CLASS)
+        socket.emit("randAdd", {
+            roomid: roomid,
+            index: ran,
+            currentClass: O_CLASS
+        })
     }
 
 }
@@ -159,10 +221,11 @@ function randRem() {
         }
         //random
         var ran = placeable[Math.floor((Math.random() * placeable.length))];
-        //clear and add event listener
-        gridElements[ran].classList.remove(O_CLASS)
-        gridElements[ran].removeEventListener('click', handleClick)
-        gridElements[ran].addEventListener('click', handleClick, { once: true })
+        socket.emit("randRem", {
+            roomid: roomid,
+            index: ran,
+            opponentClass: O_CLASS
+        })
     } else if (!xTurn && oSkill2 < 3) {
         //consume skill counter
         oSkill2 = oSkill2 + 1
@@ -175,10 +238,11 @@ function randRem() {
         }
         //random
         var ran = placeable[Math.floor((Math.random() * placeable.length))];
-        //clear and add event listener
-        gridElements[ran].classList.remove(X_CLASS)
-        gridElements[ran].removeEventListener('click', handleClick)
-        gridElements[ran].addEventListener('click', handleClick, { once: true })
+        socket.emit("randRem", {
+            roomid: roomid,
+            index: ran,
+            opponentClass: X_CLASS
+        })
     }
 }
 
@@ -194,21 +258,28 @@ function invisible() {
         curtainColor = 0
             //consume sill counter
         xSkill3 = xSkill3 + 1
-        curtain.style.backgroundColor = "black"
-        curtain.classList.add('show')
+        socket.emit("invisible", {
+            roomid: roomid,
+            color: "black",
+            opponentClass: O_CLASS
+        })
 
         //white use white curtain
     } else if (!xTurn && oSkill3 < 3) {
         curtainColor = 1
             //consume sill counter
         oSkill3 = oSkill3 + 1
-        curtain.style.backgroundColor = "white"
-        curtain.classList.add('show')
+        socket.emit("invisible", {
+            roomid: roomid,
+            color: "white",
+            opponentClass: X_CLASS
+        })
 
     }
 
 }
 
+//handle click
 function handleClick(e) {
     if (!readyToPlay) {
         alert("Please wait for other player to join");
@@ -224,7 +295,7 @@ function handleClick(e) {
     }
 
 
-
+    //get index of the grid
     const grid = e.target
     getIndex(grid)
         //black or white turn
@@ -252,23 +323,6 @@ function handleClick(e) {
         //continue
     } else {
         socket.emit('swapTurns', { roomid: roomid });
-            //show 3 skill buttons 
-        if (currentClass == X_CLASS && oSkill1 < 3) {
-            skill1.classList.add('show')
-        } else if (currentClass == O_CLASS && xSkill1 < 3) {
-            skill1.classList.add('show')
-        }
-
-        if (currentClass == X_CLASS && oSkill2 < 3) {
-            skill2.classList.add('show')
-        } else if (currentClass == O_CLASS && xSkill2 < 3) {
-            skill2.classList.add('show')
-        }
-        if (currentClass == X_CLASS && oSkill3 < 3) {
-            skill3.classList.add('show')
-        } else if (currentClass == O_CLASS && xSkill3 < 3) {
-            skill3.classList.add('show')
-        }
         setHover()
     }
 
@@ -288,21 +342,22 @@ function placeStone(index, currentClass) {
     gridElements[index].classList.add(currentClass)
 }
 
+//win check
 function winCheck(currentClass) {
     let ret = false
-        //vertical
+    //vertical
     let count = 1
     let i = iii
     while (i < 210 && gridElements[i + 15].classList[1] == currentClass) {
         count = count + 1
         i = i + 15
-            //console.log("down")
+ 
     }
     i = iii
     while (i > 14 && gridElements[i - 15].classList[1] == currentClass) {
         count = count + 1
         i = i - 15
-            //console.log("up")
+
     }
     if (count >= 5) {
         ret = true
@@ -314,13 +369,13 @@ function winCheck(currentClass) {
     while (i < 224 && i % 15 < (i + 1) % 15 && gridElements[i + 1].classList[1] == currentClass) {
         count = count + 1
         i = i + 1
-            //console.log("right")
+
     }
     i = iii
     while (i > 0 && i % 15 > (i - 1) % 15 && gridElements[i - 1].classList[1] == currentClass) {
         count = count + 1
         i = i - 1
-            //console.log("left")
+
     }
     if (count >= 5) {
         ret = true
@@ -332,13 +387,13 @@ function winCheck(currentClass) {
     while (i % 15 != 0 && i < 210 && gridElements[i + 14].classList[1] == currentClass) {
         count = count + 1
         i = i + 14
-            //console.log("diagonal 1 down")
+
     }
     i = iii
     while (i % 15 != 14 && i > 14 && gridElements[i - 14].classList[1] == currentClass) {
         count = count + 1
         i = i - 14
-            //console.log("diagonal 1 up")
+
     }
     if (count >= 5) {
         ret = true
@@ -349,13 +404,13 @@ function winCheck(currentClass) {
     while (i % 15 != 14 && i < 210 && gridElements[i + 16].classList[1] == currentClass) {
         count = count + 1
         i = i + 16
-            //console.log("diagonal 2 down")
+
     }
     i = iii
     while (i % 15 != 0 && i > 14 && gridElements[i - 16].classList[1] == currentClass) {
         count = count + 1
         i = i - 16
-            //console.log("diagonal 2 up")
+
     }
     if (count >= 5) {
         ret = true
@@ -384,11 +439,10 @@ function swapTurns() {
 }
 
 function setHover() {
-    board.classList.remove(X_CLASS)
-    board.classList.remove(O_CLASS)
-    if (xTurn) {
+    if ( xTurn == true && yourturn == 1) {
         board.classList.add(X_CLASS)
-    } else {
+    } 
+    if ( xTurn == false && yourturn == 2){
         board.classList.add(O_CLASS)
     }
 }

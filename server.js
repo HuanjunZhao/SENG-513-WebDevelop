@@ -199,6 +199,18 @@ io.on('connection', socket => {
         io.emit('draw', data);
     });
 
+    socket.on('randAdd', (data) => {
+        io.emit('randAdd', data);
+    });
+
+    socket.on('randRem', (data) => {
+        io.emit('randRem', data);
+    });
+
+    socket.on('invisible', (data) => {
+        io.emit('invisible', data);
+    });
+
 
 });
 
