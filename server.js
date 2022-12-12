@@ -85,6 +85,7 @@ io.on('connection', socket => {
         fs.writeFileSync("users.json", JSON.stringify(users));
         //send feedback 1 to client
         socket.emit('signup', 1);
+        return;
     });
 
     //user login
@@ -209,6 +210,60 @@ io.on('connection', socket => {
 
     socket.on('invisible', (data) => {
         io.emit('invisible', data);
+    });
+
+    socket.on('drawPoint', (data) => {
+        const fs = require('fs');
+
+        //check if file exist
+        if (!fs.existsSync('users.json')) {
+            //create new file if not exist
+            console.log("User file not exist, please contact admin");
+            return;
+        }
+        // read file
+        const file = fs.readFileSync('users.json');
+        const users = JSON.parse(file.toString());
+        //check if user already exist
+        for (let i = 0; i < users.user.length; i++) {
+            if (users.user[i].id === data.userid) {
+                //send feedback
+                users.user[i].point += 1;
+                fs.writeFileSync("users.json", JSON.stringify(users));
+                console.log("Point updated");
+                return;
+            }
+        }
+        //send feedback
+        console.log("User not exist");
+        return;
+    });
+
+    socket.on('winPoint', (data) => {
+        const fs = require('fs');
+
+        //check if file exist
+        if (!fs.existsSync('users.json')) {
+            //create new file if not exist
+            console.log("User file not exist, please contact admin");
+            return;
+        }
+        // read file
+        const file = fs.readFileSync('users.json');
+        const users = JSON.parse(file.toString());
+        //check if user already exist
+        for (let i = 0; i < users.user.length; i++) {
+            if (users.user[i].id === data.userid) {
+                //send feedback
+                users.user[i].point += 2;
+                fs.writeFileSync("users.json", JSON.stringify(users));
+                console.log("Point updated");
+                return;
+            }
+        }
+        //send feedback
+        console.log("User not exist");
+        return;
     });
 
 

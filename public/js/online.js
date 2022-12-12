@@ -281,22 +281,28 @@ function invisible() {
 
 //handle click
 function handleClick(e) {
+    const grid = e.target
     if (!readyToPlay) {
         alert("Please wait for other player to join");
+        grid.removeEventListener('click', handleClick)
+        grid.addEventListener('click', handleClick, { once: true })
         return;
     }
     if (yourturn == 1 && xTurn == false) {
         alert("Please wait for your turn");
+        grid.removeEventListener('click', handleClick)
+        grid.addEventListener('click', handleClick, { once: true })
         return;
     }
     if (yourturn == 2 && xTurn == true) {
         alert("Please wait for your turn");
+        grid.removeEventListener('click', handleClick)
+        grid.addEventListener('click', handleClick, { once: true })
         return;
     }
 
 
     //get index of the grid
-    const grid = e.target
     getIndex(grid)
         //black or white turn
     const currentClass = xTurn ? X_CLASS : O_CLASS
@@ -428,7 +434,14 @@ function isDraw() {
 function endGame(draw) {
     if (draw) {
         winningMessageTextElement.innerText = "Draw!"
+        socket.emit('drawPoint', {userid: userid, roomid: roomid});
     } else {
+        if(yourturn == 1 && xTurn == true){
+            socket.emit('winPoint', {userid: userid, roomid: roomid});
+        }
+        if(yourturn == 2 && xTurn == false){
+            socket.emit('winPoint', {userid: userid, roomid: roomid});
+        }
         winningMessageTextElement.innerText = `${xTurn ? "Black" : "White"} Wins!`
     }
     winningMessageElement.classList.add('show')
