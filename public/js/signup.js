@@ -6,6 +6,7 @@ function checkUserid() {
         alert("User ID can't be empty");
         return false;
     }
+
     return true;
 }
 
@@ -22,24 +23,25 @@ function checkPassword() {
     return true;
 }
 
+socket.on('signup', state => {
+    console.log(state);
+    if(parseInt(state) == 0){
+        // if the user is exist, go to the index
+        alert("User ID already exists, please login");
+        window.location.href = "index.html";
+    }else{
+        // if the user is not exist, add user, go back to the index
+        alert("User ID is created");
+        window.location.href = "index.html";
+    }
+});
+
 function getInput() {
     if (checkPassword() && checkUserid()) {
         var userid = document.getElementById("ID").value;
         var pass = document.getElementById("pass").value;
-        // send information to server to check if the user is exist
-        // if the user is exist, go back to the landing page
-        // if the user is not exist, add the user to the database and go to the homepage
-
-        socket.emit('signup', { userid, pass });
-        socket.on('signupfeedback', function(data) {
-            if (data == 'exist') {
-                alert("User ID already exists, please login");
-                window.location.href = "landing.html";
-            } else {
-                alert("User ID is created");
-                window.location.href = "homepage.html?userid=" + userid;
-            }
-        });
+        // send information to server to check if the user is exist        
+        socket.emit('signup', {userid,pass});
     } else
         return;
 }
