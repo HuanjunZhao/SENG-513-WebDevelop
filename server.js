@@ -52,6 +52,72 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 const connections = [null];
 io.on('connection', socket => {
 
+//-------------------HANDLE_LOGIN-------------------
+    //new user sign up
+    socket.on('signup', (data) => {
+        const fs = require('fs');
+
+        //check if file exist
+        if (!fs.existsSync('users.json')) {
+            //create new file if not exist
+            console.log("User file not exist, please contact admin");
+            return;
+        }
+        // read file
+        const file = fs.readFileSync('users.json');
+        //create new user
+        const newUser = {
+            id: data.userid,
+            password: data.pass,
+            point: 0
+        }
+        const users = JSON.parse(file.toString());
+        //check if user already exist
+        for(let i = 0; i < users.user.length; i++){
+            if(users.user[i].id === newUser.id){
+                console.log("User already exist");
+                //send feedback 0 to client
+                socket.emit('signup', 0);
+                return;
+            }
+        }
+        //append data to json file
+        //add json element to json object
+        users.user.push(newUser);
+        fs.writeFileSync("users.json", JSON.stringify(users));
+        //send feedback 1 to client
+        socket.emit('signup', 1);
+    });
+
+    //user login
+    socket.on('login', (data) => {
+        const fs = require('fs');
+
+        //check if file exist
+        if (!fs.existsSync('users.json')) {
+            //create new file if not exist
+            console.log("User file not exist, please contact admin");
+            return;
+        }
+        // read file
+        const file = fs.readFileSync('users.json');
+        //create new user
+        const users = JSON.parse(file.toString());
+        //check if user already exist
+        for(let i = 0; i < users.user.length; i++){
+            if(users.user[i].id === data.userid && users.user[i].password === data.pass){
+                console.log("login success");
+                //send feedback 1 to client
+                socket.emit('login', {state: 1, id: data.userid});
+                return;
+            }
+        }
+        //send feedback 0 to client
+        socket.emit('login', {state: 0, id: data.userid});
+        return;
+    })
+
+//-------------------AFTER_LOGIN-------------------
     let playerIndex = -1;
     for (const i in connections) {
 
@@ -66,36 +132,15 @@ io.on('connection', socket => {
     // Tell the connecting client what player number they are
     socket.emit('player-number', playerIndex);
 
-
-    socket.on('signup', (data) => {
-        userDetail.userName = data[0];
-        userDetail.password = data[1];
-        console.log(userDetail);
-        socket.emit('signupfeedback', '123');
-    });
-
-
-    // recieveNewUserData();
-
     //disconnect
     socket.on('disconnect', () => {
         connections[playerIndex] = null;
         socket.broadcast.emit('player-connection', playerIndex);
     });
+
 });
 
 //-----------------------------------------------------------------------------------------
-//functions for sign up page
-function recieveNewUserData() {
-    //let unerdata = new userDetail();
-    socket.on('signup', (data) => {
-        userDetail.userName = data[0];
-        userDetail.password = data[1];
-    });
-    console.log(userDetail);
-    socket.emit('signupfeedback', '123');
-
-}
 
 //function to generate random name
 function randomName() {
