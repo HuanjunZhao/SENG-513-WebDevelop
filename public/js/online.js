@@ -18,6 +18,7 @@ let xSkill3 = 0
 let oSkill3 = 0
 let iii = 0
 let xTurn;
+let yourturn;
 let roomid;
 let userid;
 
@@ -30,6 +31,7 @@ window.onload = function() {
     let url = new URL(window.location.href);
     roomid = url.searchParams.get("roomid");
     userid = url.searchParams.get("userid");
+    yourturn = parseInt(url.searchParams.get("player"));
     socket.emit('canIstart', roomid);
     console.log(roomid);
 };
@@ -44,6 +46,33 @@ socket.on('gamestart', data => {
         console.log('not ready');
     }
 });
+
+socket.on('placeStone', data => {
+    console.log(data.index);
+    console.log(data.currentClass);
+    if (data.roomid == roomid){
+        placeStone(data.index, data.currentClass);
+    }
+})
+
+socket.on('swapTurns', data => {
+    if (data.roomid == roomid){
+        swapTurns();
+    }
+})
+
+socket.on('win', data => {
+    if (data.roomid == roomid){
+        endGame(false);
+    }
+})
+
+socket.on('draw', data => {
+    if (data.roomid == roomid){
+        endGame(true);
+    }
+})
+
 start();
 // restartButton.addEventListener('click', start)
 
@@ -185,12 +214,22 @@ function handleClick(e) {
         alert("Please wait for other player to join");
         return;
     }
+    if (yourturn == 1 && xTurn == false) {
+        alert("Please wait for your turn");
+        return;
+    }
+    if (yourturn == 2 && xTurn == true) {
+        alert("Please wait for your turn");
+        return;
+    }
+
+
 
     const grid = e.target
     getIndex(grid)
         //black or white turn
     const currentClass = xTurn ? X_CLASS : O_CLASS
-    placeStone(grid, currentClass)
+    socket.emit('placeStone', { index: iii, currentClass: currentClass, roomid: roomid });
         //check apperance of the curtain
     if (curtain.classList.length == 2) {
         if (xTurn && curtainColor == 0) {
@@ -204,15 +243,15 @@ function handleClick(e) {
 
     //winning
     if (winCheck(currentClass)) {
-        endGame(false)
+        socket.emit('win', { roomid: roomid });
 
         //draw
     } else if (isDraw()) {
-        endGame(true)
+        socket.emit('draw', { roomid: roomid });
 
         //continue
     } else {
-        swapTurns()
+        socket.emit('swapTurns', { roomid: roomid });
             //show 3 skill buttons 
         if (currentClass == X_CLASS && oSkill1 < 3) {
             skill1.classList.add('show')
@@ -245,8 +284,8 @@ function getIndex(grid) {
 }
 
 //place a stone
-function placeStone(grid, currentClass) {
-    grid.classList.add(currentClass)
+function placeStone(index, currentClass) {
+    gridElements[index].classList.add(currentClass)
 }
 
 function winCheck(currentClass) {
@@ -355,5 +394,5 @@ function setHover() {
 }
 
 function getBack() {
-    window.location.href = "index.html";
+    window.location.href = "homepage.html?userid=" + userid;
 }

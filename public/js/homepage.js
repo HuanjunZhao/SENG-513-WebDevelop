@@ -21,7 +21,12 @@ function checkRoomid() {
     } else if (status1 == 200) {
         alert("Room is ready");
         roomid = document.getElementById("roomid").value;
-        window.location.href = "online.html?userid=" + userid + "&roomid=" + roomid;
+        window.location.href = "online.html?userid=" + userid + "&roomid=" + roomid + "&player=1";
+        return true;
+    } else if (status1 == 201) {
+        alert("Room is ready");
+        roomid = document.getElementById("roomid").value;
+        window.location.href = "online.html?userid=" + userid + "&roomid=" + roomid + "&player=2";
         return true;
     } else if (status1 == 404) {
         alert("Room is not exist");

@@ -115,6 +115,10 @@ io.on('connection', socket => {
         return;
     })
 
+
+    //-------------------MATCH_FRIEND-------------------
+
+
     socket.on('currentRoom', (data) => {
         console.log(data);
         //check if room null
@@ -137,7 +141,7 @@ io.on('connection', socket => {
         if (gameIndex > -1 && cunrrntPlayerinRoom[gameIndex] == 1) {
             cunrrntPlayerinRoom[gameIndex]++;
             currentPeopleInRoom[gameIndex][1] = data[1];
-            socket.emit('status', '200');
+            socket.emit('status', '201');
             //gamestart(gameIndex);
             return;
         }
@@ -149,16 +153,13 @@ io.on('connection', socket => {
     });
 
     socket.on('canIstart', (data) => {
-        console.log("11111111111" + data);
-        console.log(cunrrntPlayerinRoom[roomIDs.indexOf(data)]);
-
         if (cunrrntPlayerinRoom[roomIDs.indexOf(data)] == 2) {
             console.log("send data to all client");
             gamestart(data);
         }
     });
 
-    //-------------------AFTER_LOGIN-------------------
+
     let playerIndex = -1;
     for (const i in connections) {
 
@@ -179,17 +180,33 @@ io.on('connection', socket => {
         socket.broadcast.emit('player-connection', playerIndex);
     });
 
+
+//-----------------------------------GAME_PLAY--------------------------------------------------
+    socket.on('placeStone', (data) => {
+        console.log(data);
+        io.emit('placeStone', data);
+    });
+
+    socket.on('swapTurns', (data) => {
+        io.emit('swapTurns', data);
+    });
+
+    socket.on('win', (data) => {
+        io.emit('win', data);
+    });
+
+    socket.on('draw', (data) => {
+        io.emit('draw', data);
+    });
+
+
 });
 
-//-----------------------------------------------------------------------------------------
 
-//function to generate random name
-function randomName() {
-    userName = names[Math.floor(Math.random() * 50)];
-}
-
-
-
+//-----------------------------------FUNCTION--------------------------------------------------
 function gamestart(room) {
     io.emit('gamestart', room);
 }
+
+
+
