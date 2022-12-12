@@ -182,7 +182,7 @@ io.on('connection', socket => {
     });
 
 
-//-----------------------------------GAME_PLAY--------------------------------------------------
+    //-----------------------------------GAME_PLAY--------------------------------------------------
     socket.on('placeStone', (data) => {
         console.log(data);
         io.emit('placeStone', data);
@@ -213,6 +213,7 @@ io.on('connection', socket => {
     });
 
     socket.on('drawPoint', (data) => {
+        clearRoomData(data.roomid);
         const fs = require('fs');
 
         //check if file exist
@@ -240,6 +241,7 @@ io.on('connection', socket => {
     });
 
     socket.on('winPoint', (data) => {
+        clearRoomData(data.roomid);
         const fs = require('fs');
 
         //check if file exist
@@ -275,5 +277,11 @@ function gamestart(room) {
     io.emit('gamestart', room);
 }
 
-
-
+function clearRoomData(room) {
+    let index = roomIDs.indexOf(room);
+    roomIDs.splice(index, 1);
+    cunrrntPlayerinRoom.splice(index, 1);
+    currentPeopleInRoom.splice(index, 1);
+    turn.splice(index, 1);
+    roomCounter--;
+}
