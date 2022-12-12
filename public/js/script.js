@@ -20,7 +20,7 @@ let iii = 0
 let xTurn
 const socket = io();
 const roomId =  getUrlParam("roomid");
-const playerId = getUrlParam("player1");
+const userId = getUrlParam("player1");
 //all magic happened here
 start()
 
@@ -336,17 +336,17 @@ function getBack() {
 //***chating
 
 
-socket.on('chat',(player,message)=>{
-    console.log("receving chat form "+player+":"+message );
+socket.on('chat',(userId,message)=>{
+    console.log("receving chat form "+userId+":"+message );
     let msg = document.createElement("div");
     msg.className="chat_msg";
-    msg.innerHTML = "<b>"+ player +"</b>" +": "+message;
+    msg.innerHTML = "<b>"+ userId +"</b>" +": "+message;
     document.querySelector('.chat_log').appendChild(msg);
 })
 function sendChatMsgListeners(){
     document.querySelector('[type=button][value=send]').addEventListener("click",function (){
         const message =  document.querySelector('.chat_box').value;
-        if(message != null && message.length > 0)socket.emit('chat',roomId,playerId,message);
+        if(message != null && message.length > 0)socket.emit('chat',roomId,userId,message);
         document.querySelector('.chat_box').value = "";
     })
 };

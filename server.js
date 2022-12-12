@@ -42,6 +42,15 @@ let currentPeopleInRoom = [
 ];
 // turn for each room
 let turn = [null];
+// queue for random game matching
+let matchingRoomQueue = [];
+//dummy finised upon room function created
+function roomData(roomId,playerIndices,gameId){
+    this.roomId = roomId;
+    this.playerIndicies = playerIndices;
+    this.gameId = gameId;
+}
+
 
 //Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -81,17 +90,57 @@ io.on('connection', socket => {
     socket.on('disconnect', () => {
         connections[playerIndex] = null;
         socket.broadcast.emit('player-connection', playerIndex);
-    });
-
+        matchingRoomQueue = matchingRoomQueue.filter(room =>{
+            if(!(room.playerIndicies.includes(playerIndex)))return true;
+        })
+    })
 
 
     //chating
-    socket.on('chat',(room,player,message)=>{
-        console.log("receving chat form "+ room +"\n"+player+":"+message );
-        io.sockets.emit('chat',player,message);
-        // io.to(room).emit('chat',player,message); //should be change to code.
+    socket.on('chat',(roomId,userId,message)=>{
+        console.log("receving chat form "+ roomId +"\n"+userId+":"+message );
+        io.sockets.emit('chat',userId,message);
+        io.to(roomId).emit('chat',userId,message);
     })
 
+    //queue matching
+    socket.on('random_matching',(userId) =>{
+        if(matchingRoomQueue.length>=1){
+            let matchingRoom = matchingRoomQueue[0];
+            let roomId = matchingRoom.roomId;
+            let anotherIndex = matchingRoom.playerIndicies[0];
+            let player1Id = "player1Id"// To do: adding entry for reversing index to player Id
+            let player2Id = "player2Id"// To do: adding entry for reversing index to player Id
+            matchingRoom.playerIndicies[1]=playerIndex;
+            socket.join(matchingRoom.roomId);
+            //To do: create an active room game with room data above
+            matchingRoomQueue = matchingRoomQueue.slice(1);//pop the first.
+            io.to(roomId).emit('matching_found',roomId,player1Id,player2Id)
+            console.log('matching found, remove the first matching room from matching roomList');
+            console.log(matchingRoomQueue);
+
+        }else{
+            //To do :align with room design
+            let roomId = userId;    //To do : I dont know what to set here.
+            let gameId = userId;     //To do : I dont know what to set here.
+            matchingRoomQueue.push(new roomData(roomId,[playerIndex,null],gameId));
+            socket.join(roomId);
+            socket.emit('waiting_for_matching');
+            console.log('waiting for matching, current mathching roomList');
+            console.log(matchingRoomQueue);
+        }
+    })
+
+    socket.on('cancel_matching',(userId)=>{
+        let room = matchingRoomQueue.find(item =>{return item.playerIndicies.includes(playerIndex)});
+        let roomId = room.roomId;
+        socket.leave(roomId);
+        matchingRoomQueue = matchingRoomQueue.filter(room =>{
+            if(!(room.playerIndicies.includes(playerIndex)))return true;
+        })
+        console.log('player '+userId+'cancel matching, current mathching roomList');
+        console.log(matchingRoomQueue);
+    })
 });
 
 //-----------------------------------------------------------------------------------------
