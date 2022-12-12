@@ -1,3 +1,5 @@
+const socket = io();
+
 function getLocalPage() {
     window.location.href = "game.html?local=true";
 }
@@ -24,26 +26,25 @@ function checkPassword() {
     return true;
 }
 
+socket.on('login', feedback => {
+    if(parseInt(feedback.state) == 0){
+        // if the user is exist, go to the index
+        alert("User ID or password is incorrect");
+    }else{
+        // if the user is not exist, add user, go back to the index
+        alert("Login success");
+        window.location.href = "homepage.html?userid=" + feedback.id;
+    }
+});
+
 function getInput() {
+    console.log("getInput");
     if (checkPassword() && checkUserid()) {
         var userid = document.getElementById("ID").value;
         var pass = document.getElementById("pass").value;
-        // send information to server to check if the user is valid
-        // if the user is valid, go to the homepage
-
-        // socket.emit('login', {userid: userid, pass: pass});
-        // socket.on('login', function(data){
-        //     if(data == 'valid'){
-        window.location.href = "homepage.html?userid=" + userid;
-        //     }
-        //     else{
-        //         alert("User ID or password is incorrect");
-        //         return;
-        //     }
-        // });
-
-    } else
-        return;
+        socket.emit('login', {userid,pass});
+    }
+    return;
 }
 
 function getBack() {
