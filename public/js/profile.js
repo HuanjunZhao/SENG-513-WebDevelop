@@ -16,9 +16,12 @@ function getProfile() {
 getProfile();
 
 socket.on("profile", data => {
-    document.getElementById("wins").innerHTML = data.wins;
-    document.getElementById("winrate").innerHTML = data.rate;
-    document.getElementById("rank").innerHTML = data.ranking;
+    if (data.userid == userid) {
+        document.getElementById("wins").innerHTML = data.wins;
+        document.getElementById("winrate").innerHTML = data.rate;
+        document.getElementById("rank").innerHTML = data.ranking;
+    }
+    return;
 })
 
 function logOut() {
