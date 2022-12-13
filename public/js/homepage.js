@@ -21,12 +21,12 @@ function checkRoomid() {
         alert("Room is full");
         return false;
     } else if (status1 == 200) {
-        alert("Room is ready");
+        isMatching?alert("Match Found!"):alert("Room is ready");
         roomid = document.getElementById("roomid").value;
         window.location.href = "online.html?userid=" + userid + "&roomid=" + roomid + "&player=1";
         return true;
     } else if (status1 == 201) {
-        alert("Room is ready");
+        isMatching?alert("Match Found!"):alert("Room is ready");
         roomid = document.getElementById("roomid").value;
         window.location.href = "online.html?userid=" + userid + "&roomid=" + roomid + "&player=2";
         return true;
