@@ -246,6 +246,13 @@ body {
         margin-top: 0.5%;
     }
 
+    #quitButton {
+        width: 50%;
+        height: 20%;
+        font-size: 0.5em;
+        margin-top: 0.5%;
+    }
+
 
     a {
         font-size: 0.7em;
@@ -420,6 +427,20 @@ body {
     text-transform: uppercase;
     text-align: center;
     padding-top: 200px;
+    padding-bottom: 30px;
+}
+
+.title1 {
+    /* position: absolute; */
+    font-size: 40px;
+    font-weight: 800;
+    color: black;
+    /* left: 30%;
+    top: 20%; */
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    text-align: center;
+    padding-top: 100px;
     padding-bottom: 30px;
 }
 
@@ -643,12 +664,35 @@ td {
     font-family: 'Courier New', Courier, monospace;
 }
 
+#quitButton {
+    display: inline-block;
+    width: auto;
+    background-color: transparent;
+    cursor: crosshair;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 30px;
+    color: black;
+    border: 2px solid rgb(28, 31, 30);
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#quitButton:hover {
+    color: white;
+    transition: 0.2s;
+    background-color: black;
+    border: 2px solid gainsboro;
+}
+
 #btn:hover {
     color: white;
     transition: 0.2s;
     background-color: black;
     border: 2px solid gainsboro;
 }
+
 .chat_log{
     width: 100% ;
     display: flex;

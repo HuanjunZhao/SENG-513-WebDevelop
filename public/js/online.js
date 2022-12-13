@@ -4,7 +4,7 @@ const gridElements = document.querySelectorAll('[data-grid]')
 const board = document.getElementById('grid')
 const winningMessageTextElement = document.querySelector('[data-winning-message-text]')
 const winningMessageElement = document.getElementById('winningMessage')
-const restartButton = document.getElementById('restartButton')
+const quitButton = document.getElementById('quitButton')
 const curtain = document.getElementById('curtain')
 const skill1 = document.getElementById('skill1')
 const skill2 = document.getElementById('skill2')
@@ -140,6 +140,7 @@ socket.on('start', data => {
             skill1.addEventListener('click', randAdd)
             skill2.addEventListener('click', randRem)
             skill3.addEventListener('click', invisible)
+            quitButton.addEventListener('click', quitGame)
             gridElements.forEach(grid => {
                 grid.classList.remove(X_CLASS)
                 grid.classList.remove(O_CLASS)
@@ -498,6 +499,10 @@ function isDraw() {
     return [...gridElements].every(grid => {
         return grid.classList.contains(X_CLASS) || grid.classList.contains(O_CLASS)
     })
+}
+
+function quitGame() {
+    socket.emit('draw', { roomid: roomid });
 }
 
 function endGame(draw) {
