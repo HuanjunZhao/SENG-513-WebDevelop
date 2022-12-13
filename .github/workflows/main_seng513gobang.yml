@@ -6,7 +6,7 @@ name: Build and deploy Node.js app to Azure Web App - seng513Gobang
 on:
   push:
     branches:
-      - Azure_Running_Branch
+      - main
   workflow_dispatch:
 
 jobs:
@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'seng513Gobang'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F1C9C74909AF45FE86F9EF2472305B1A }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_184D58A51FBC4874879B737A3ABFA4CE }}
           package: .
