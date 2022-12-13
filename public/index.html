@@ -13,10 +13,13 @@
 
 <body>
     <img class="bgc" src="img/background.png" width="100%" height="100%" alt="" style="opacity: 0.7;">
-    <div class="title">Please Make A Selection</div>
+    <div class="title">Gobang Game</div>
+    
     <div class="btn-holder">
+        <a href="signup.html" class="signup" id="signup" style="display: none;">Don't have account? Sign up!</a>
         <button id="online" class="selectbutton" onclick=getForm()><span>Online Game</span></button>
         <button id="local" class="selectbutton" onclick=getLocalPage()><span>Local Game</span></button>
+        
     </div>
     <form id="login" style="display:none;">
         <br>
@@ -32,7 +35,7 @@
         <input type="button" id="login" value="Submit" onclick=javascrtpt:getInput()>
         <input type="button" id="back" value="Back" onclick=javascrtpt:getBack()>
     </form>
-    <a href="signup.html" class="signup" id="signup" style="display: none;">Don't have account? Sign up!</a>
+    <!-- <a href="signup.html" class="signup" id="signup" style="display: none;">Don't have account? Sign up!</a> -->
 
 </body>
 
