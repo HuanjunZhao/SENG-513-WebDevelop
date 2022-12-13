@@ -122,10 +122,6 @@ io.on('connection', socket => {
 
     socket.on('currentRoom', (data) => {
         //data:[roomid,userid]
-        console.log('currentRoom', data);
-        console.log('roomID,currentpeopleInroom')
-        console.log(roomIDs,currentPeopleInRoom)
-        console.log("************************")
         //check if room null
         if (data[0] == '') {
             socket.emit('status', '404');
@@ -242,7 +238,6 @@ io.on('connection', socket => {
 
     socket.on('start', (data) => {
         let update = getUser(data.userid);
-        console.log("cnm nirenne",update);
         if(update.isPlaying == 1){
             io.emit('start', {
                 isPlaying: update.isPlaying,
@@ -270,7 +265,7 @@ io.on('connection', socket => {
     })
 
     socket.on('placeStone', (data) => {
-        console.log(data);
+        console.log('placeStone',data);
         let update = getUserRoom(data.roomid);
         for (let i = 0; i < update.length; i++) {
             if(data.currentClass == 'x'){
@@ -536,13 +531,13 @@ function gamestart(room) {
 }
 
 function clearRoomData(room) {
-    console.log('clearRoomData_b4',roomIDs);
+    //console.log('clearRoomData_b4',roomIDs);
     let index = roomIDs.indexOf(room);
     roomIDs.splice(index, 1);
     cunrrntPlayerinRoom.splice(index, 1);
     currentPeopleInRoom.splice(index, 1);
     turn.splice(index, 1);
     roomCounter--;
-    console.log('clearRoomData_after',roomIDs);
+    //console.log('clearRoomData_after',roomIDs);
 }
 

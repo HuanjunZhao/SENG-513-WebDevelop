@@ -44,7 +44,6 @@ socket.on('login', feedback => {
 });
 
 function getInput() {
-    console.log("getInput");
     if (checkPassword() && checkUserid()) {
         var userid = document.getElementById("ID").value;
         var pass = document.getElementById("pass").value;
