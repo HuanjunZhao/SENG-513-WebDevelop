@@ -40,7 +40,6 @@ function getForm() {
     document.getElementById('findid').style.display = 'block';
     document.getElementById('join').style.display = 'none';
     let form = document.querySelector('form');
-    form.style.top = '55%';
 }
 
 function getRoom() {

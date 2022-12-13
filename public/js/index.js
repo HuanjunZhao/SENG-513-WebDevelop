@@ -59,5 +59,4 @@ function getForm() {
     document.getElementById('local').style.display = 'none';
     document.getElementById('signup').style.display = 'inline';
     let form = document.querySelector('form');
-    form.style.top = '55%';
 }
