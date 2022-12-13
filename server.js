@@ -371,27 +371,25 @@ io.on('connection', socket => {
 
     //draw and update status for both player
     socket.on('drawPoint', (data) => {
+        console.log('drawPoint',data);
+        let update = getUser(data.userid);
+        update.point += 1;
+        update.room = "";
+        update.isPlaying = 0;
+        update.myturn = false;
+        update.x = [];
+        update.o = [];
+        update.s1 = 3;
+        update.s2 = 3;
+        update.s3 = 3;
+        update.total += 1;
+        updateUser(update);
         clearRoomData(data.roomid);
-        let update = getUserRoom(data.roomid);
-        for (let i = 0; i < update.length; i++) {
-            update[i].point += 1;
-            update[i].room = "";
-            update[i].isPlaying = 0;
-            update[i].myturn = false;
-            update[i].x = [];
-            update[i].o = [];
-            update[i].s1 = 3;
-            update[i].s2 = 3;
-            update[i].s3 = 3;
-            update[i].total += 1;
-            updateUser(update[i]);
-        }
         return;
     });
 
     //someone win and update status for both player
     socket.on('winPoint', (data) => {
-        clearRoomData(data.roomid);
         let update = getUserRoom(data.roomid);
         for (let i = 0; i < update.length; i++) {
             if(data.userid == update[i].id){
@@ -409,6 +407,7 @@ io.on('connection', socket => {
             update[i].total += 1;
             updateUser(update[i]);
         }
+        clearRoomData(data.roomid);
         return;
     });
 
