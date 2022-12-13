@@ -3,32 +3,11 @@ const path = require('path');
 const http = require('http');
 const PORT = process.env.PORT || 3000; // use in Azure
 const socketIO = require('socket.io');
+const e = require('express');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-const names = ["Aiden", "Brianna", "Cameron", "Derek", "Emma", "Finn", "Gabriel", "Hannah", "Ian", "Jasmine", "Kaden", "Lena", "Maddox", "Nora", "Olivia", "Preston", "Quinn", "Riley", "Samantha", "Trevor", "Ursula", "Victoria", "William", "Xander", "Yara", "Zachary", "Ava", "Benjamin", "Charlie", "Daisy", "Eli", "Fiona", "Gemma", "Haley", "Isaac", "Julia", "Kaitlyn", "Logan", "Mia", "Nate", "Olive", "Parker", "Quincy", "Rylee", "Sophia", "Trenton", "Ubaldo", "Violet", "Wyatt", "Ximena", "Yvette", "Zane"]
-
-const userDetail = {
-        userName: '',
-        password: '',
-        email: '',
-        userID: '',
-        score: 0,
-        win: 0,
-        lose: 0,
-        draw: 0,
-        rank: 0,
-        roomId: '',
-        isReady: false,
-        isPlaying: false,
-        isGuest: null,
-        timeLeft: null,
-        myturn: false,
-        message: '',
-        messageQueue: [],
-        roomStatus: ['Waiting', 'Waiting'],
-    }
     // let index = 0;
     //EACH INDEX MEANS A ROOM WITH HOWMANY PLAYERS
 let cunrrntPlayerinRoom = [];
@@ -67,7 +46,15 @@ io.on('connection', socket => {
         const newUser = {
             id: data.userid,
             password: data.pass,
-            point: 0
+            point: 0,
+            room: 0,
+            isPlaying: 0,
+            myturn: false,
+            x: [],
+            o: [],
+            s1: 3,
+            s2: 3,
+            s3: 3
         }
         const users = JSON.parse(file.toString());
         //check if user already exist
@@ -106,9 +93,15 @@ io.on('connection', socket => {
         for (let i = 0; i < users.user.length; i++) {
             if (users.user[i].id === data.userid && users.user[i].password === data.pass) {
                 console.log("login success");
-                //send feedback 1 to client
-                socket.emit('login', { state: 1, id: data.userid });
-                return;
+                if(users.user[i].isPlaying > 0){
+                    //send feedback 2 to client
+                    socket.emit('login', { state: 2, id: data.userid, room: users.user[i].room, isPlaying: users.user[i].isPlaying });
+                    return;
+                }else{
+                    //send feedback 1 to client
+                    socket.emit('login', { state: 1, id: data.userid });
+                    return;
+                }
             }
         }
         //send feedback 0 to client
@@ -143,7 +136,6 @@ io.on('connection', socket => {
             cunrrntPlayerinRoom[gameIndex]++;
             currentPeopleInRoom[gameIndex][1] = data[1];
             socket.emit('status', '201');
-            //gamestart(gameIndex);
             return;
         }
         //room already have two player
@@ -154,9 +146,15 @@ io.on('connection', socket => {
     });
 
     socket.on('canIstart', (data) => {
-        if (cunrrntPlayerinRoom[roomIDs.indexOf(data)] == 2) {
-            console.log("send data to all client");
-            gamestart(data);
+        let update = getUser(data.userid);
+        update.isPlaying = data.yourturn;
+        update.room = data.roomid;
+        updateUser(update);
+        if (cunrrntPlayerinRoom[roomIDs.indexOf(data.roomid)] == 2) {
+            gamestart(data.roomid);
+        }else{
+            update.myturn = true;
+            updateUser(update);
         }
     });
 
@@ -183,12 +181,64 @@ io.on('connection', socket => {
 
 
     //-----------------------------------GAME_PLAY--------------------------------------------------
+    
+    socket.on('start', (data) => {
+        let update = getUser(data.userid);
+        console.log("cnm nirenne",update);
+        if(update.isPlaying == 1){
+            io.emit('start', {
+                isPlaying: update.isPlaying,
+                roomid: update.room,
+                myturn: update.myturn,
+                x: update.x,
+                o: update.o,
+                s1: update.s1,
+                s2: update.s2,
+                s3: update.s3
+            });
+        }
+        if(update.isPlaying == 2){
+            io.emit('start', {
+                isPlaying: update.isPlaying,
+                roomid: update.room,
+                myturn: update.myturn,
+                x: update.x,
+                o: update.o,
+                s1: update.s1,
+                s2: update.s2,
+                s3: update.s3
+            });
+        }
+    })
+    
     socket.on('placeStone', (data) => {
         console.log(data);
+        let update = getUserRoom(data.roomid);
+        for (let i = 0; i < update.length; i++) {
+            if(data.currentClass == 'x'){
+                update[i].x.push(data.index);
+                updateUser(update[i]);
+            }
+
+            if(data.currentClass == 'o'){
+                update[i].o.push(data.index);
+                updateUser(update[i]);
+            }
+        }
         io.emit('placeStone', data);
     });
 
     socket.on('swapTurns', (data) => {
+        let update = getUserRoom(data.roomid);
+        for (let i = 0; i < update.length; i++) {
+            if(update[i].myturn == true){
+                update[i].myturn = false;
+                updateUser(update[i]);
+            }else{
+                update[i].myturn = true;
+                updateUser(update[i]);
+            }
+        }
         io.emit('swapTurns', data);
     });
 
@@ -201,49 +251,117 @@ io.on('connection', socket => {
     });
 
     socket.on('randAdd', (data) => {
+        let update = getUserRoom(data.roomid);
+        for (let i = 0; i < update.length; i++) {
+            if(data.currentClass == 'x'){
+                update[i].x.push(data.index);
+                if(update[i].isPlaying == 1){
+                    update[i].s1 -= 1;
+                }
+
+            }else if(data.currentClass == 'o'){
+                update[i].o.push(data.index);
+                if(update[i].isPlaying == 2){
+                    update[i].s1 -= 1;
+                }
+            }
+            updateUser(update[i]);
+        }
         io.emit('randAdd', data);
     });
 
     socket.on('randRem', (data) => {
+        let update = getUserRoom(data.roomid);
+        for (let i = 0; i < update.length; i++) {
+            if(data.opponentClass == 'x' ){
+                for (let j = 0; j < update[i].x.length; j++) {
+                    if(update[i].x[j] == data.index){
+                        update[i].x.splice(j, 1);
+                    }
+                }
+                if(update[i].isPlaying == 2){
+                    update[i].s2 -= 1;
+                }
+            }else if(data.opponentClass == 'o'){
+                for (let j = 0; j < update[i].o.length; j++) {
+                    if(update[i].o[j] == data.index){
+                        update[i].o.splice(j, 1);
+                    }
+                }
+                if(update[i].isPlaying == 1){
+                    update[i].s2 -= 1;
+                }
+            }
+            updateUser(update[i]);
+
+            
+        }
         io.emit('randRem', data);
     });
 
+    //someone use invisible
     socket.on('invisible', (data) => {
+        let update = getUserRoom(data.roomid);
+        for (let i = 0; i < update.length; i++) {
+            if(data.color == "black" && update[i].isPlaying == 1){
+                update[i].s3 -= 1;
+                updateUser(update[i]);
+            }
+
+            if(data.color == "white" && update[i].isPlaying == 2){
+                update[i].s3 -= 1;
+                updateUser(update[i]);
+            }
+        }
         io.emit('invisible', data);
     });
 
+    //draw and update status for both player
     socket.on('drawPoint', (data) => {
         clearRoomData(data.roomid);
-        const fs = require('fs');
-
-        //check if file exist
-        if (!fs.existsSync('users.json')) {
-            //create new file if not exist
-            console.log("User file not exist, please contact admin");
-            return;
+        let update = getUserRoom(data.roomid);
+        for (let i = 0; i < update.length; i++) {
+            update[i].point += 1;
+            update[i].room = "";
+            update[i].isPlaying = 0;
+            update[i].myturn = false;
+            update[i].x = [];
+            update[i].o = [];
+            update[i].s1 = 3;
+            update[i].s2 = 3;
+            update[i].s3 = 3;
+            update[i].total += 1;
+            updateUser(update[i]);
         }
-        // read file
-        const file = fs.readFileSync('users.json');
-        const users = JSON.parse(file.toString());
-        //check if user already exist
-        for (let i = 0; i < users.user.length; i++) {
-            if (users.user[i].id === data.userid) {
-                //send feedback
-                users.user[i].point += 1;
-                fs.writeFileSync("users.json", JSON.stringify(users));
-                console.log("Point updated");
-                return;
-            }
-        }
-        //send feedback
-        console.log("User not exist");
         return;
     });
 
+    //someone win and update status for both player
     socket.on('winPoint', (data) => {
         clearRoomData(data.roomid);
-        const fs = require('fs');
+        let update = getUserRoom(data.roomid);
+        for (let i = 0; i < update.length; i++) {
+            if(data.userid == update[i].id){
+                update[i].point += 2;
+                update[i].wins += 1;
+            }
+            update[i].room = "";
+            update[i].isPlaying = 0;
+            update[i].myturn = false;
+            update[i].x = [];
+            update[i].o = [];
+            update[i].s1 = 3;
+            update[i].s2 = 3;
+            update[i].s3 = 3;
+            update[i].total += 1;
+            updateUser(update[i]);
+        }
+        return;
+    });
 
+    //get user data by id
+    function getUser(id) {
+        const fs = require('fs');
         //check if file exist
         if (!fs.existsSync('users.json')) {
             //create new file if not exist
@@ -255,11 +373,94 @@ io.on('connection', socket => {
         const users = JSON.parse(file.toString());
         //check if user already exist
         for (let i = 0; i < users.user.length; i++) {
-            if (users.user[i].id === data.userid) {
+            if (users.user[i].id === id) {
                 //send feedback
-                users.user[i].point += 2;
+                return users.user[i];
+            }
+        }
+        //send feedback
+        console.log("User not exist");
+        return;
+    }
+
+    //update user data
+    function updateUser(user) {
+        const fs = require('fs');
+        //check if file exist
+        if (!fs.existsSync('users.json')) {
+            //create new file if not exist
+            console.log("User file not exist, please contact admin");
+            return;
+        }
+        // read file
+        const file = fs.readFileSync('users.json');
+        const users = JSON.parse(file.toString());
+        //check if user already exist
+        for (let i = 0; i < users.user.length; i++) {
+            if (users.user[i].id === user.id) {
+                //send feedback
+                users.user[i] = user;
                 fs.writeFileSync("users.json", JSON.stringify(users));
-                console.log("Point updated");
+                console.log(user.id + " updated");
+                return;
+            }
+        }
+        //send feedback
+        console.log("User not exist");
+        return;
+    }
+
+    //get user data by room
+    function getUserRoom(room) {
+        let user = [];
+        const fs = require('fs');
+        //check if file exist
+        if (!fs.existsSync('users.json')) {
+            //create new file if not exist
+            console.log("User file not exist, please contact admin");
+            return;
+        }
+        // read file
+        const file = fs.readFileSync('users.json');
+        const users = JSON.parse(file.toString());
+        //check if user already exist
+        for (let i = 0; i < users.user.length; i++) {
+            if (users.user[i].room === room) {
+                //send feedback
+                user.push(users.user[i]);
+            }
+        }
+        //send feedback
+        if(user.length == 0){
+            console.log("User not exist");
+            return;
+        }
+        return user;
+    }
+//-------------------------------PROFILE----------------------------------------------------------
+    socket.on('profile', (data) => {
+        const fs = require('fs');
+        //check if file exist
+        if (!fs.existsSync('users.json')) {
+            //create new file if not exist
+            console.log("User file not exist, please contact admin");
+            return;
+        }
+        // read file
+        const file = fs.readFileSync('users.json');
+        const users = JSON.parse(file.toString());
+        let rank = 1;
+        //check if user already exist
+        for (let i = 0; i < users.user.length; i++) {
+            if (users.user[i].id === data) {
+                //send feedback
+                for (let j = 0; j < users.user.length; j++) {
+                    if(users.user[i].point < users.user[j].point){
+                        rank += 1;
+                    }
+                }
+                let winrate = users.user[i].wins / users.user[i].total;
+                io.emit('profile', {wins: users.user[i].wins, rate: winrate, ranking: rank});
                 return;
             }
         }
@@ -267,7 +468,6 @@ io.on('connection', socket => {
         console.log("User not exist");
         return;
     });
-
 
 });
 
@@ -285,3 +485,4 @@ function clearRoomData(room) {
     turn.splice(index, 1);
     roomCounter--;
 }
+
