@@ -460,7 +460,7 @@ io.on('connection', socket => {
                     }
                 }
                 let winrate = users.user[i].wins / users.user[i].total;
-                io.emit('profile', {wins: users.user[i].wins, rate: winrate, ranking: rank});
+                io.emit('profile', {userid: users.user[i].id, wins: users.user[i].wins, rate: winrate, ranking: rank});
                 return;
             }
         }
