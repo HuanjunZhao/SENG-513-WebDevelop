@@ -460,8 +460,9 @@ input[type=password] {
 
 input::placeholder {
     color: black;
-    font-weight: 400;
+    font-weight: 700;
     font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
 }
 
 input[id="login"], input[id="back"], input[id="find"] {
@@ -514,9 +515,10 @@ button#logout {
 
 
 button#logout {
-    left: 50%;
+    left: 85%;
+    bottom: 8%;
     transform: translate(-50%, -50%);
-    position: relative;
+    position: absolute;
     margin-top: 50px;
     margin-right: 40px;
 

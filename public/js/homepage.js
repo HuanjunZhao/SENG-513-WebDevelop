@@ -5,7 +5,7 @@ var userid = getval.split('=')[1];
 let status1 = 0;
 let roomid = 0;
 
-document.getElementById("user").innerHTML = "Hello, User " + userid;
+document.getElementById("user").innerHTML = "Hello, " + userid;
 
 //get the room list
 socket.on('status', para => {
