@@ -157,18 +157,14 @@ io.on('connection', socket => {
     });
 
     socket.on('canIstart', (data) => {
-        //data:roomid
+        //data: {roomid, userid, yourturn}
         socket.join(data.roomid);
         let update = getUser(data.userid);
         update.isPlaying = data.yourturn;
         update.room = data.roomid;
+        if(update.isPlaying === 1 && update.x.length === 0 && update.o.length === 0)update.myturn = true;
         updateUser(update);
-        if (cunrrntPlayerinRoom[roomIDs.indexOf(data.roomid)] == 2) {
-            gamestart(data.roomid);
-        }else{
-            update.myturn = true;
-            updateUser(update);
-        }
+        if (cunrrntPlayerinRoom[roomIDs.indexOf(data.roomid)] == 2)gamestart(data.roomid);
     });
 
 
@@ -200,7 +196,6 @@ io.on('connection', socket => {
     //chating
     socket.on('chat',(roomId,userId,message)=>{
         console.log("receving chat form "+ roomId +"\n"+userId+":"+message );
-        //io.sockets.emit('chat',userId,message);
         io.to(roomId.toString()).emit('chat',userId,message);
     })
 
@@ -541,11 +536,13 @@ function gamestart(room) {
 }
 
 function clearRoomData(room) {
+    console.log('clearRoomData_b4',roomIDs);
     let index = roomIDs.indexOf(room);
     roomIDs.splice(index, 1);
     cunrrntPlayerinRoom.splice(index, 1);
     currentPeopleInRoom.splice(index, 1);
     turn.splice(index, 1);
     roomCounter--;
+    console.log('clearRoomData_after',roomIDs);
 }
 
