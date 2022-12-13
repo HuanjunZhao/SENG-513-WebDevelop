@@ -9,7 +9,7 @@ let isMatching = false;
 document.getElementById("user").innerHTML = "Hello, " + userid;
 
 //get the room list
-socket.on('c', para => {
+socket.on('status', para => {
     //para : code for room status;
     //convert the para to int
     status1 = parseInt(para);
@@ -76,9 +76,9 @@ socket.on('waiting_for_matching',()=>{
 })
 
 socket.on('matching_found',(roomId,player1Id,player2Id)=>{
-
     console.log('matching_found',roomId,player1Id,player2Id);
-
+    document.getElementById("roomid").value=roomId;
+    getRoom();
 })
 
 function logOut() {

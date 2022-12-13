@@ -125,6 +125,7 @@ io.on('connection', socket => {
         console.log('currentRoom', data);
         console.log('roomID,currentpeopleInroom')
         console.log(roomIDs,currentPeopleInRoom)
+        console.log("************************")
         //check if room null
         if (data[0] == '') {
             socket.emit('status', '404');
