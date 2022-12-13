@@ -131,12 +131,11 @@ socket.on('invisible', data => {
 })
 
 socket.on('start', data => {
-    //console.log('iamhere');
+
     if (data.roomid == roomid){
-        //console.log("turn and playing",yourturn," ",data.isplaying);
         //initialize x
         if(yourturn == 1 && yourturn == data.isPlaying){
-            //console.log("xxxx"+data);
+
 
             skill1.addEventListener('click', randAdd)
             skill2.addEventListener('click', randRem)
@@ -178,7 +177,7 @@ socket.on('start', data => {
         }
         //initialize o
         if(yourturn == 2 && yourturn == data.isPlaying){
-            //console.log("oooo"+data);
+
 
             skill1.addEventListener('click', randAdd)
             skill2.addEventListener('click', randRem)
