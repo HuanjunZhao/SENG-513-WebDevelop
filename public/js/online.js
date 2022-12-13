@@ -34,23 +34,19 @@ window.onload = function() {
     yourturn = parseInt(url.searchParams.get("player"));
     if(yourturn == 1){
         console.log('you are player 1');
-        skill1.classList.add('show');
-        //skill2.classList.add('show');
-        skill3.classList.add('show');
     }
     if(yourturn == 2){
         console.log('you are player 2');
     }
-    socket.emit('canIstart', roomid);
+    socket.emit('canIstart', {roomid, userid, yourturn});
     console.log(roomid);
 };
-start();
+
 socket.on('gamestart', data => {
-    console.log(data);
-    console.log(roomid);
     if (data == roomid) {
         console.log('gamestart','ready');
         readyToPlay = true;
+        start();
     } else {
         console.log('gamestart','not ready');
     }
@@ -67,24 +63,24 @@ socket.on('swapTurns', data => {
         swapTurns();
         //show 3 skill buttons if it is your turn
         if (xTurn && yourturn == 1) {
-            if(xSkill1 <3) skill1.classList.add('show');
-            if(xSkill2 <3) skill2.classList.add('show');
-            if(xSkill3 <3) skill3.classList.add('show');
+            if(xSkill1 > 0) skill1.classList.add('show');
+            if(xSkill2 > 0) skill2.classList.add('show');
+            if(xSkill3 > 0) skill3.classList.add('show');
         }else if (!xTurn && yourturn == 2) {
-            if(oSkill1 <3) skill1.classList.add('show');
-            if(oSkill2 <3) skill2.classList.add('show');
-            if(oSkill3 <3) skill3.classList.add('show');
+            if(oSkill1 > 0) skill1.classList.add('show');
+            if(oSkill2 > 0) skill2.classList.add('show');
+            if(oSkill3 > 0) skill3.classList.add('show');
         }
         //remove 3 skill buttons if it is not your turn
         if (xTurn && yourturn == 2) {
-            if(xSkill1 <3) skill1.classList.remove('show');
-            if(xSkill2 <3) skill2.classList.remove('show');
-            if(xSkill3 <3) skill3.classList.remove('show');
+            skill1.classList.remove('show');
+            skill2.classList.remove('show');
+            skill3.classList.remove('show');
             curtain.classList.remove('show')
         }else if (!xTurn && yourturn == 1) {
-            if(oSkill1 <3) skill1.classList.remove('show');
-            if(oSkill2 <3) skill2.classList.remove('show');
-            if(oSkill3 <3) skill3.classList.remove('show');
+            skill1.classList.remove('show');
+            skill2.classList.remove('show');
+            skill3.classList.remove('show');
             curtain.classList.remove('show')
         }
     }
@@ -106,6 +102,7 @@ socket.on('draw', data => {
 socket.on('randAdd', data => {
     if (data.roomid == roomid){
         //place stone
+        gridElements[data.index].removeEventListener('click', handleClick)
         gridElements[data.index].classList.add(data.currentClass)
     }
 })
@@ -133,31 +130,104 @@ socket.on('invisible', data => {
     }
 })
 
-// restartButton.addEventListener('click', start)
+socket.on('start', data => {
+    console.log('iamhere');
+    if (data.roomid == roomid){
+        console.log("turn and playing",yourturn," ",data.isplaying);
+        //initialize x
+        if(yourturn == 1 && yourturn == data.isPlaying){
+            console.log("xxxx"+data);
 
-function start() {
-    //initialize
-    xTurn = true;
-    xSkill1 = 0
-    oSkill1 = 0
-    xSkill2 = 0
-    oSkill2 = 0
-    xSkill3 = 0
-    oSkill3 = 0
-    gridElements.forEach(grid => {
-            grid.classList.remove(X_CLASS)
-            grid.classList.remove(O_CLASS)
-            grid.removeEventListener('click', handleClick)
             skill1.addEventListener('click', randAdd)
             skill2.addEventListener('click', randRem)
             skill3.addEventListener('click', invisible)
-            grid.addEventListener('click', handleClick, { once: true })
-        })
-        //hover
-    setHover()
-        //winning message disappear
-    winningMessageElement.classList.remove('show')
+            gridElements.forEach(grid => {
+                grid.classList.remove(X_CLASS)
+                grid.classList.remove(O_CLASS)
+                grid.removeEventListener('click', handleClick)
+                grid.addEventListener('click', handleClick, { once: true })
+            })
 
+            xSkill1 = data.s1;
+            xSkill2 = data.s2;
+            xSkill3 = data.s3;
+            if(data.myturn){
+                xTurn = true;
+                skill1.classList.remove('show')
+                skill2.classList.remove('show')
+                skill3.classList.remove('show')
+                if(xSkill1 > 0) skill1.classList.add('show');
+                if(xSkill2 > 0) skill2.classList.add('show');
+                if(xSkill3 > 0) skill3.classList.add('show');
+                
+            }else{
+                xTurn = false;
+                skill1.classList.remove('show')
+                skill2.classList.remove('show')
+                skill3.classList.remove('show')
+                
+            }
+            for( let i = 0; i < data.x.length; i++){
+                gridElements[data.x[i]].removeEventListener('click', handleClick)
+                gridElements[data.x[i]].classList.add(X_CLASS)
+            }
+            for( let i = 0; i < data.o.length; i++){
+                gridElements[data.o[i]].removeEventListener('click', handleClick)
+                gridElements[data.o[i]].classList.add(O_CLASS)
+            }      
+        }
+        //initialize o
+        if(yourturn == 2 && yourturn == data.isPlaying){
+            console.log("oooo"+data);
+
+            skill1.addEventListener('click', randAdd)
+            skill2.addEventListener('click', randRem)
+            skill3.addEventListener('click', invisible)
+            gridElements.forEach(grid => {
+                grid.classList.remove(X_CLASS)
+                grid.classList.remove(O_CLASS)
+                grid.removeEventListener('click', handleClick)
+                grid.addEventListener('click', handleClick, { once: true })
+            })
+            oSkill1 = data.s1;
+            oSkill2 = data.s2;
+            oSkill3 = data.s3;
+            if(data.myturn){
+                xTurn = false;
+                skill1.classList.remove('show')
+                skill2.classList.remove('show')
+                skill3.classList.remove('show')
+                if(oSkill1 > 0) skill1.classList.add('show');
+                if(oSkill2 > 0) skill2.classList.add('show');
+                if(oSkill3 > 0) skill3.classList.add('show');
+                
+            }else{
+                xTurn = true;
+                skill1.classList.remove('show')
+                skill2.classList.remove('show')
+                skill3.classList.remove('show')
+                
+            }
+            
+            for( let i = 0; i < data.x.length; i++){
+                gridElements[data.x[i]].removeEventListener('click', handleClick)
+                gridElements[data.x[i]].classList.add(X_CLASS)
+            }
+            for( let i = 0; i < data.o.length; i++){
+                gridElements[data.o[i]].removeEventListener('click', handleClick)
+                gridElements[data.o[i]].classList.add(O_CLASS)
+            }      
+        }
+        //hover
+        setHover()
+        //winning message disappear
+        winningMessageElement.classList.remove('show')
+    }
+})
+
+
+function start() {
+    socket.emit('start', {roomid, userid});
 }
 
 
@@ -166,9 +236,9 @@ function randAdd() {
     skill1.classList.remove('show')
     skill2.classList.remove('show')
     skill3.classList.remove('show')
-    if (xTurn && xSkill1 < 3) {
+    if (xTurn && xSkill1 > 0) {
         //consume sill counter
-        xSkill1 = xSkill1 + 1
+        xSkill1 = xSkill1 - 1;
         var placeable = []
             //find available grid
         for (let i = 0; i < gridElements.length; i++) {
@@ -183,9 +253,9 @@ function randAdd() {
             index: ran,
             currentClass: X_CLASS
         })
-    } else if (!xTurn && oSkill1 < 3) {
+    } else if (!xTurn && oSkill1 > 0) {
         //consume sill counter
-        oSkill1 = oSkill1 + 1
+        oSkill1 = oSkill1 - 1;
         var placeable = []
             //find available grid
         for (let i = 0; i < gridElements.length; i++) {
@@ -209,9 +279,9 @@ function randRem() {
     skill1.classList.remove('show')
     skill2.classList.remove('show')
     skill3.classList.remove('show')
-    if (xTurn && xSkill2 < 3) {
+    if (xTurn && xSkill2 > 0) {
         //consume sill counter
-        xSkill2 = xSkill2 + 1
+        xSkill2 = xSkill2 - 1;
         var placeable = []
             //find exist white stone
         for (let i = 0; i < gridElements.length; i++) {
@@ -226,9 +296,9 @@ function randRem() {
             index: ran,
             opponentClass: O_CLASS
         })
-    } else if (!xTurn && oSkill2 < 3) {
+    } else if (!xTurn && oSkill2 > 0) {
         //consume skill counter
-        oSkill2 = oSkill2 + 1
+        oSkill2 = oSkill2 - 1;
         var placeable = []
             //find exist blackk stone
         for (let i = 0; i < gridElements.length; i++) {
@@ -254,10 +324,10 @@ function invisible() {
     skill3.classList.remove('show')
 
     //black use black curtain
-    if (xTurn && xSkill3 < 3) {
+    if (xTurn && xSkill3 > 0) {
         curtainColor = 0
             //consume sill counter
-        xSkill3 = xSkill3 + 1
+        xSkill3 = xSkill3 - 1;
         socket.emit("invisible", {
             roomid: roomid,
             color: "black",
@@ -265,10 +335,10 @@ function invisible() {
         })
 
         //white use white curtain
-    } else if (!xTurn && oSkill3 < 3) {
+    } else if (!xTurn && oSkill3 > 0) {
         curtainColor = 1
             //consume sill counter
-        oSkill3 = oSkill3 + 1
+        oSkill3 = oSkill3 -1;
         socket.emit("invisible", {
             roomid: roomid,
             color: "white",

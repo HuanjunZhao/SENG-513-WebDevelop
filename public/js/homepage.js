@@ -6,7 +6,7 @@ let status1 = 0;
 let roomid = 0;
 let isMatching = false;
 
-document.getElementById("user").innerHTML = "Hello, User " + userid;
+document.getElementById("user").innerHTML = "Hello, " + userid;
 
 //get the room list
 socket.on('c', para => {
@@ -42,7 +42,6 @@ function getForm() {
     document.getElementById('findid').style.display = 'block';
     document.getElementById('join').style.display = 'none';
     let form = document.querySelector('form');
-    form.style.top = '55%';
 }
 
 function getRoom() {

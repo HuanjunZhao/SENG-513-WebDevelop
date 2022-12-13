@@ -340,23 +340,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 10%;
     
 
 
 }
 
 .selectbutton {
-    /*每个按钮应在页面中占有自己的位置，因此选择相对定位*/
     position: relative;
-    /*使元素填满父级元素*/
     display: inline-block;
-    /*div的width/height设置为auto,那么表示的这个div的所有部分(内容、边框、内边距等的距离加起来)为父元素宽度*/
     width: auto;
     height: auto;
-    /*方便观察设置背景色为黑色，演示效果中设置为透明transparent*/
     background-color: transparent;
     border: none;
-    /*鼠标悬浮于其上时显示为十字光标*/
     cursor: crosshair;
     color: rgb(255, 255, 255);
     transition: 0.2s 0.1s;
@@ -369,21 +365,13 @@ body {
 }
 
 .selectbutton span {
-    /*同样文字也应每个按钮中占有固定的位置，选择相对定位*/
     position: relative;
-    /*使元素填满父级元素*/
     display: inline-block;
-    /*设置字体大小*/
     font-size: 14px;
-    /*设置文字为粗体*/
     font-weight: bold;
-    /*设置文字间的间距*/
     letter-spacing: 2px;
-    /*定义为大写字母*/
     text-transform: uppercase;
-    /*调整子元素在父元素中的位置*/
     padding: 15px;
-    /*设置从一个属性过渡到另一个属性的时间*/
     transition: 0.3s;
     color: white;
     transition: 0.2s;
@@ -396,27 +384,21 @@ body {
     content: "";
     background: transparent;
     z-index: 2;
-    /*设置before及after两个盒子的大小*/
     width: 10%;
     height: 25%;
     transition: 0.35s;
 }
 
 .selectbutton::before {
-    /*使子盒子与父盒子上边缘及左边缘距离为0，使子盒子置于父盒子左上角*/
     top: 0;
     left: 0;
-    /*为方便观察设置为红色，最终效果中设置为黑色*/
-    /*分别设置上边框及左边框*/
     border-left: 1px solid black;
     border-top: 1px solid black;
 }
 
 .selectbutton::after {
-    /*使子盒子与父盒子下边缘及右边缘距离为0，使子盒子置于父盒子右下角*/
     bottom: 0;
     right: 0;
-    /*分别设置下边框及底边框*/
     border-right: 1px solid black;
     border-bottom: 1px solid black;
 }
@@ -438,7 +420,7 @@ body {
     text-transform: uppercase;
     text-align: center;
     padding-top: 200px;
-    padding-bottom: 100px;
+    padding-bottom: 30px;
 }
 
 .info {
@@ -455,7 +437,6 @@ body {
 
 form {
     position: absolute;
-    top: 35%;
     left: 25%;
     width: 50%;
 }
@@ -479,8 +460,9 @@ input[type=password] {
 
 input::placeholder {
     color: black;
-    font-weight: 400;
+    font-weight: 700;
     font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
 }
 
 input[id="login"], input[id="back"], input[id="find"] {
@@ -533,9 +515,10 @@ button#logout {
 
 
 button#logout {
-    left: 50%;
+    left: 85%;
+    bottom: 8%;
     transform: translate(-50%, -50%);
-    position: relative;
+    position: absolute;
     margin-top: 50px;
     margin-right: 40px;
 
@@ -573,16 +556,25 @@ a {
     border: 1px solid rgb(28, 31, 30);
     cursor: crosshair;
     font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: large;
 }
 
 a.signup {
-    top: 50%;
-    left: 75%;
+    margin: 0;
+    position: absolute;
+    top: 5%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    
 }
 
 a.profile {
-    top: 35%;
-    left: 43.5%;
+    margin: 0;
+    position: absolute;
+    top: 5%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 a:hover {

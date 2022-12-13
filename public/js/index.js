@@ -28,12 +28,18 @@ function checkPassword() {
 
 socket.on('login', feedback => {
     if(parseInt(feedback.state) == 0){
-        // if the user is exist, go to the index
+        // wrong id or password
         alert("User ID or password is incorrect");
-    }else{
-        // if the user is not exist, add user, go back to the index
+    }
+    if(parseInt(feedback.state) == 1){
+        // login success
         alert("Login success");
         window.location.href = "homepage.html?userid=" + feedback.id;
+    }
+    if(parseInt(feedback.state) == 2){
+        // continue game
+        alert("Continue your game");
+        window.location.href = "online.html?userid=" + feedback.id+"&roomid="+feedback.room+"&player="+feedback.isPlaying;
     }
 });
 
@@ -59,5 +65,4 @@ function getForm() {
     document.getElementById('local').style.display = 'none';
     document.getElementById('signup').style.display = 'inline';
     let form = document.querySelector('form');
-    form.style.top = '55%';
 }
