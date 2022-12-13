@@ -19,7 +19,14 @@ let roomIDs = [];
 let currentPeopleInRoom = [];
 // turn for each room
 let turn = [];
-
+// queue for random game matching
+let matchingRoomQueue = [];
+//dummy finised upon room function created
+function roomData(roomId,playerIndices,gameId){
+    this.roomId = roomId;
+    this.playerIndicies = playerIndices;
+    this.gameId = gameId;
+}
 //Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
 // Start server
@@ -114,7 +121,11 @@ io.on('connection', socket => {
 
 
     socket.on('currentRoom', (data) => {
-        console.log(data);
+        //data:[roomid,userid]
+        console.log('currentRoom', data);
+        console.log('roomID,currentpeopleInroom')
+        console.log(roomIDs,currentPeopleInRoom)
+        console.log("************************")
         //check if room null
         if (data[0] == '') {
             socket.emit('status', '404');
@@ -146,6 +157,8 @@ io.on('connection', socket => {
     });
 
     socket.on('canIstart', (data) => {
+        //data:roomid
+        socket.join(data.roomid);
         let update = getUser(data.userid);
         update.isPlaying = data.yourturn;
         update.room = data.roomid;
@@ -177,11 +190,61 @@ io.on('connection', socket => {
     socket.on('disconnect', () => {
         connections[playerIndex] = null;
         socket.broadcast.emit('player-connection', playerIndex);
-    });
+        matchingRoomQueue = matchingRoomQueue.filter(room =>{
+            if(!(room.playerIndicies.includes(playerIndex)))return true;
+        })
 
+    })
+
+
+    //chating
+    socket.on('chat',(roomId,userId,message)=>{
+        console.log("receving chat form "+ roomId +"\n"+userId+":"+message );
+        //io.sockets.emit('chat',userId,message);
+        io.to(roomId.toString()).emit('chat',userId,message);
+    })
+
+    //queue matching
+    socket.on('random_matching',(userId) =>{
+        if(matchingRoomQueue.length>=1){
+            let matchingRoom = matchingRoomQueue[0];
+            let roomId = matchingRoom.roomId;
+            let anotherIndex = matchingRoom.playerIndicies[0];
+            let player1Id = userId;
+            let player2Id = "player2Id"
+            matchingRoom.playerIndicies[1]=playerIndex;
+            matchingRoomQueue = matchingRoomQueue.slice(1);//pop the first.
+            socket.join(roomId);
+            io.to(roomId).emit('matching_found',roomId,player1Id,player2Id)
+            console.log('matching found, remove the first matching room from matching roomList');
+            console.log(matchingRoomQueue);
+
+        }else{
+            let roomId = userId;    //To do : I dont know what to set here.
+            let gameId = userId;     //To do : I dont know what to set here.
+            matchingRoomQueue.push(new roomData(roomId,[playerIndex,null],gameId));
+            socket.join(roomId);
+            socket.emit('waiting_for_matching');
+            console.log('waiting for matching, current mathching roomList');
+            console.log(matchingRoomQueue);
+        }
+    })
+
+    socket.on('cancel_matching',(userId)=>{
+        let room = matchingRoomQueue.find(item =>{return item.playerIndicies.includes(playerIndex)});
+        if (room != null){
+            let roomId = room.roomId;
+            socket.leave(roomId);
+            matchingRoomQueue = matchingRoomQueue.filter(room =>{
+                if(!(room.playerIndicies.includes(playerIndex)))return true;
+            })
+            console.log('player '+userId+'cancel matching, current mathching roomList');
+            console.log(matchingRoomQueue);
+        }
+    })
 
     //-----------------------------------GAME_PLAY--------------------------------------------------
-    
+
     socket.on('start', (data) => {
         let update = getUser(data.userid);
         console.log("cnm nirenne",update);
@@ -210,7 +273,7 @@ io.on('connection', socket => {
             });
         }
     })
-    
+
     socket.on('placeStone', (data) => {
         console.log(data);
         let update = getUserRoom(data.roomid);
@@ -294,7 +357,7 @@ io.on('connection', socket => {
             }
             updateUser(update[i]);
 
-            
+
         }
         io.emit('randRem', data);
     });

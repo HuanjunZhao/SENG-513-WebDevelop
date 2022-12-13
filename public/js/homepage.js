@@ -4,11 +4,13 @@ var getval = thisURL.split('?')[1];
 var userid = getval.split('=')[1];
 let status1 = 0;
 let roomid = 0;
+let isMatching = false;
 
 document.getElementById("user").innerHTML = "Hello, " + userid;
 
 //get the room list
 socket.on('status', para => {
+    //para : code for room status;
     //convert the para to int
     status1 = parseInt(para);
     checkRoomid();
@@ -56,11 +58,28 @@ function getBack() {
 }
 
 function getRandom() {
-    // soket.emit("random", userid);
-    // socket.on("random", enemyid => {
-    //    window.location.href = "game.html?player1="+userid+"&player2="+enemyid;
-    // })
+
+    if (isMatching === false){
+        socket.emit('random_matching',userid);
+        document.getElementById('join').innerHTML= "<span>Cancel Game Matching!</span>";
+        isMatching = true
+        console.log(userid + "request to match")
+    }else{
+        socket.emit('cancel_matching',userid);
+        document.getElementById('join').innerHTML= "<span>Random Game Matching!</span>";
+        isMatching = false;
+        console.log(userid + "cancel to match")
+    }
 }
+socket.on('waiting_for_matching',()=>{
+    console.log("waiting for 2nd player to match");
+})
+
+socket.on('matching_found',(roomId,player1Id,player2Id)=>{
+    console.log('matching_found',roomId,player1Id,player2Id);
+    document.getElementById("roomid").value=roomId;
+    getRoom();
+})
 
 function logOut() {
     window.location.href = "index.html";
@@ -69,3 +88,7 @@ function logOut() {
 function getProfile() {
     window.location.href = "profile.html?userid=" + userid;
 }
+
+//***************
+// non game-logic functions
+//***************

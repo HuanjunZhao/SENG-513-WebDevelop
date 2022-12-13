@@ -18,7 +18,7 @@ let xSkill3 = 0
 let oSkill3 = 0
 let iii = 0
 let xTurn
-
+const socket = io();
 //all magic happened here
 start()
 
@@ -329,3 +329,5 @@ function setHover() {
 function getBack() {
     window.location.href = "index.html";
 }
+
+

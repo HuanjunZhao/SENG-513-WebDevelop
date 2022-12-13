@@ -44,11 +44,11 @@ window.onload = function() {
 
 socket.on('gamestart', data => {
     if (data == roomid) {
-        console.log('ready');
+        console.log('gamestart','ready');
         readyToPlay = true;
         start();
     } else {
-        console.log('not ready');
+        console.log('gamestart','not ready');
     }
 });
 
@@ -533,3 +533,35 @@ function setHover() {
 function getBack() {
     window.location.href = "homepage.html?userid=" + userid;
 }
+
+//***chating
+
+
+socket.on('chat',(userId,message)=>{
+    console.log("receving chat form "+userId+":"+message );
+    let msg = document.createElement("div");
+    msg.className="chat_msg";
+    msg.innerHTML = "<b>"+ userId +"</b>" +": "+message;
+    document.querySelector('.chat_log').appendChild(msg);
+})
+function sendChatMsgListeners(){
+    document.querySelector('[type=button][value=send]').addEventListener("click",function (){
+        const message =  document.querySelector('.chat_box').value;
+        if(message != null && message.length > 0)socket.emit('chat',roomid,userid,message);
+        document.querySelector('.chat_box').value = "";
+        console.log('chat',roomid,userid,message);
+    })
+};
+
+sendChatMsgListeners();
+
+//***************
+// non game-logic functions
+//***************
+
+function getUrlParam(name, url) {
+    let u = arguments[1] || window.location.href,
+        reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"),
+        r = u.substr(u.indexOf("?") + 1).match(reg);
+    return r != null ? decodeURI(r[2]) : "";
+};
