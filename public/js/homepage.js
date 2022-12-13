@@ -9,7 +9,8 @@ let isMatching = false;
 document.getElementById("user").innerHTML = "Hello, User " + userid;
 
 //get the room list
-socket.on('status', para => {
+socket.on('c', para => {
+    //para : code for room status;
     //convert the para to int
     status1 = parseInt(para);
     checkRoomid();
@@ -76,9 +77,18 @@ socket.on('waiting_for_matching',()=>{
 })
 
 socket.on('matching_found',(roomId,player1Id,player2Id)=>{
-    let enemyId;
-    player1Id === userid? enemyId = player2Id:enemyId=player1Id;
-    window.location.href = "game.html?player1="+userid+"&player2=" + enemyId + "&roomid=" + roomId;
+
+    console.log('matching_found',roomId,player1Id,player2Id);
+
+    document.getElementById("roomid").value = roomId;
+    socket.emit('currentRoom', [roomid, userid]);
+
+    if(player1Id === userid){
+        setTimeout(()=>{socket.emit('currentRoom', [roomid, userid])},1000);
+    }else{
+        socket.emit('currentRoom', [roomid, userid]);
+    }
+
 })
 
 function logOut() {
