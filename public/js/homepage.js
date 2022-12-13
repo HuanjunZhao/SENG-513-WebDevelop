@@ -79,15 +79,6 @@ socket.on('matching_found',(roomId,player1Id,player2Id)=>{
 
     console.log('matching_found',roomId,player1Id,player2Id);
 
-    document.getElementById("roomid").value = roomId;
-    socket.emit('currentRoom', [roomid, userid]);
-
-    if(player1Id === userid){
-        setTimeout(()=>{socket.emit('currentRoom', [roomid, userid])},1000);
-    }else{
-        socket.emit('currentRoom', [roomid, userid]);
-    }
-
 })
 
 function logOut() {
