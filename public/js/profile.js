@@ -9,7 +9,7 @@ var rank = 0;
 
 //get user profile from server
 function getProfile() {
-    console.log(userid);
+    //console.log(userid);
     socket.emit("profile", userid);
 }
 

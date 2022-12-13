@@ -24,7 +24,7 @@ function checkPassword() {
 }
 
 socket.on('signup', state => {
-    console.log(state);
+    //console.log(state);
     if(parseInt(state) == 0){
         // if the user is exist, go to the index
         alert("User ID already exists, please login");

@@ -32,6 +32,7 @@ window.onload = function() {
     roomid = url.searchParams.get("roomid");
     userid = url.searchParams.get("userid");
     yourturn = parseInt(url.searchParams.get("player"));
+    console.log(roomid);
     if(yourturn == 1){
         console.log('you are player 1');
     }
@@ -39,7 +40,6 @@ window.onload = function() {
         console.log('you are player 2');
     }
     socket.emit('canIstart', {roomid, userid, yourturn});
-    console.log(roomid);
 };
 
 socket.on('gamestart', data => {
@@ -131,12 +131,12 @@ socket.on('invisible', data => {
 })
 
 socket.on('start', data => {
-    console.log('iamhere');
+    //console.log('iamhere');
     if (data.roomid == roomid){
-        console.log("turn and playing",yourturn," ",data.isplaying);
+        //console.log("turn and playing",yourturn," ",data.isplaying);
         //initialize x
         if(yourturn == 1 && yourturn == data.isPlaying){
-            console.log("xxxx"+data);
+            //console.log("xxxx"+data);
 
             skill1.addEventListener('click', randAdd)
             skill2.addEventListener('click', randRem)
@@ -178,7 +178,7 @@ socket.on('start', data => {
         }
         //initialize o
         if(yourturn == 2 && yourturn == data.isPlaying){
-            console.log("oooo"+data);
+            //console.log("oooo"+data);
 
             skill1.addEventListener('click', randAdd)
             skill2.addEventListener('click', randRem)
@@ -538,7 +538,7 @@ function getBack() {
 
 
 socket.on('chat',(userId,message)=>{
-    console.log("receving chat form "+userId+":"+message );
+    //console.log("receving chat form "+userId+":"+message );
     let msg = document.createElement("div");
     msg.className="chat_msg";
     msg.innerHTML = "<b>"+ userId +"</b>" +": "+message;
@@ -549,7 +549,7 @@ function sendChatMsgListeners(){
         const message =  document.querySelector('.chat_box').value;
         if(message != null && message.length > 0)socket.emit('chat',roomid,userid,message);
         document.querySelector('.chat_box').value = "";
-        console.log('chat',roomid,userid,message);
+        //console.log('chat',roomid,userid,message);
     })
 };
 

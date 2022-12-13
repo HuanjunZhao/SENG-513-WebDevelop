@@ -47,7 +47,7 @@ function getForm() {
 function getRoom() {
     //send the signal to server to get the room list
     roomid = document.getElementById("roomid").value;
-    console.log(roomid);
+    //console.log(roomid);
     socket.emit('currentRoom', [roomid, userid]);
 }
 
