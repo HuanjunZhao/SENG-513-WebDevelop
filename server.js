@@ -239,7 +239,7 @@ io.on('connection', socket => {
     socket.on('start', (data) => {
         let update = getUser(data.userid);
         if(update.isPlaying == 1){
-            io.emit('start', {
+            io.to(update.room).emit('start', {
                 isPlaying: update.isPlaying,
                 roomid: update.room,
                 myturn: update.myturn,
@@ -251,7 +251,7 @@ io.on('connection', socket => {
             });
         }
         if(update.isPlaying == 2){
-            io.emit('start', {
+            io.to(update.room).emit('start', {
                 isPlaying: update.isPlaying,
                 roomid: update.room,
                 myturn: update.myturn,
@@ -278,7 +278,7 @@ io.on('connection', socket => {
                 updateUser(update[i]);
             }
         }
-        io.emit('placeStone', data);
+        io.to(data.roomid).emit('placeStone', data);
     });
 
     socket.on('swapTurns', (data) => {
@@ -292,15 +292,15 @@ io.on('connection', socket => {
                 updateUser(update[i]);
             }
         }
-        io.emit('swapTurns', data);
+        io.to(data.roomid).emit('swapTurns', data);
     });
 
     socket.on('win', (data) => {
-        io.emit('win', data);
+        io.to(data.roomid).emit('win', data);
     });
 
     socket.on('draw', (data) => {
-        io.emit('draw', data);
+        io.to(data.roomid).emit('draw', data);
     });
 
     socket.on('randAdd', (data) => {
@@ -320,7 +320,7 @@ io.on('connection', socket => {
             }
             updateUser(update[i]);
         }
-        io.emit('randAdd', data);
+        io.to(data.roomid).emit('randAdd', data);
     });
 
     socket.on('randRem', (data) => {
@@ -349,7 +349,7 @@ io.on('connection', socket => {
 
 
         }
-        io.emit('randRem', data);
+        io.to(data.roomid).emit('randRem', data);
     });
 
     //someone use invisible
@@ -366,7 +366,7 @@ io.on('connection', socket => {
                 updateUser(update[i]);
             }
         }
-        io.emit('invisible', data);
+        io.to(data.roomid).emit('invisible', data);
     });
 
     //draw and update status for both player
@@ -526,7 +526,7 @@ io.on('connection', socket => {
 
 //-----------------------------------FUNCTION--------------------------------------------------
 function gamestart(room) {
-    io.emit('gamestart', room);
+    io.to(room).emit('gamestart', room);
 }
 
 function clearRoomData(room) {
