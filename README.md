@@ -29,9 +29,11 @@ Make a new directory<br>
 Clone the repository <br>
 &nbsp;    git clone https://github.com/HuanjunZhao/SENG-513-WebDevelop.git <br>
 Open the directory <br>
-&nbsp;    cd SENG-513-WebDevelop <br>
+&nbsp;    cd .\SENG-513-WebDevelop\ <br>
+Open the VSCode <br>
+&nbsp; turn on the terminal of Vscode
 Run the server side <br>
-&nbsp;    npm run dev <br>
+&nbsp;  npm start <br>
 Run the client side <br>
 &nbsp;    Enter ： http://127.0.0.1:3000/ on browser <br>
  2. Online game><br>
