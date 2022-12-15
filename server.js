@@ -8,8 +8,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-    // let index = 0;
-    //EACH INDEX MEANS A ROOM WITH HOWMANY PLAYERS
+// let index = 0;
+//EACH INDEX MEANS A ROOM WITH HOWMANY PLAYERS
 let cunrrntPlayerinRoom = [];
 // how many rooms we have
 let roomCounter = 0;
@@ -22,7 +22,7 @@ let turn = [];
 // queue for random game matching
 let matchingRoomQueue = [];
 //dummy finised upon room function created
-function roomData(roomId,playerIndices,gameId){
+function roomData(roomId, playerIndices, gameId) {
     this.roomId = roomId;
     this.playerIndicies = playerIndices;
     this.gameId = gameId;
@@ -53,8 +53,10 @@ io.on('connection', socket => {
         const newUser = {
             id: data.userid,
             password: data.pass,
+            wins: 0,
+            total: 0,
             point: 0,
-            room: 0,
+            room: "",
             isPlaying: 0,
             myturn: false,
             x: [],
@@ -100,11 +102,11 @@ io.on('connection', socket => {
         for (let i = 0; i < users.user.length; i++) {
             if (users.user[i].id === data.userid && users.user[i].password === data.pass) {
                 console.log("login success");
-                if(users.user[i].isPlaying > 0){
+                if (users.user[i].isPlaying > 0) {
                     //send feedback 2 to client
                     socket.emit('login', { state: 2, id: data.userid, room: users.user[i].room, isPlaying: users.user[i].isPlaying });
                     return;
-                }else{
+                } else {
                     //send feedback 1 to client
                     socket.emit('login', { state: 1, id: data.userid });
                     return;
@@ -158,9 +160,9 @@ io.on('connection', socket => {
         let update = getUser(data.userid);
         update.isPlaying = data.yourturn;
         update.room = data.roomid;
-        if(update.isPlaying === 1 && update.x.length === 0 && update.o.length === 0)update.myturn = true;
+        if (update.isPlaying === 1 && update.x.length === 0 && update.o.length === 0) update.myturn = true;
         updateUser(update);
-        if (cunrrntPlayerinRoom[roomIDs.indexOf(data.roomid)] == 2)gamestart(data.roomid);
+        if (cunrrntPlayerinRoom[roomIDs.indexOf(data.roomid)] == 2) gamestart(data.roomid);
     });
 
 
@@ -182,38 +184,38 @@ io.on('connection', socket => {
     socket.on('disconnect', () => {
         connections[playerIndex] = null;
         socket.broadcast.emit('player-connection', playerIndex);
-        matchingRoomQueue = matchingRoomQueue.filter(room =>{
-            if(!(room.playerIndicies.includes(playerIndex)))return true;
+        matchingRoomQueue = matchingRoomQueue.filter(room => {
+            if (!(room.playerIndicies.includes(playerIndex))) return true;
         })
 
     })
 
 
     //chating
-    socket.on('chat',(roomId,userId,message)=>{
-        console.log("receving chat form "+ roomId +"\n"+userId+":"+message );
-        io.to(roomId.toString()).emit('chat',userId,message);
+    socket.on('chat', (roomId, userId, message) => {
+        console.log("receving chat form " + roomId + "\n" + userId + ":" + message);
+        io.to(roomId.toString()).emit('chat', userId, message);
     })
 
     //queue matching
-    socket.on('random_matching',(userId) =>{
-        if(matchingRoomQueue.length>=1){
+    socket.on('random_matching', (userId) => {
+        if (matchingRoomQueue.length >= 1) {
             let matchingRoom = matchingRoomQueue[0];
             let roomId = matchingRoom.roomId;
             let anotherIndex = matchingRoom.playerIndicies[0];
             let player1Id = userId;
             let player2Id = "player2Id"
-            matchingRoom.playerIndicies[1]=playerIndex;
-            matchingRoomQueue = matchingRoomQueue.slice(1);//pop the first.
+            matchingRoom.playerIndicies[1] = playerIndex;
+            matchingRoomQueue = matchingRoomQueue.slice(1); //pop the first.
             socket.join(roomId);
-            io.to(roomId).emit('matching_found',roomId,player1Id,player2Id)
+            io.to(roomId).emit('matching_found', roomId, player1Id, player2Id)
             console.log('matching found, remove the first matching room from matching roomList');
             console.log(matchingRoomQueue);
 
-        }else{
-            let roomId = userId;    //To do : I dont know what to set here.
-            let gameId = userId;     //To do : I dont know what to set here.
-            matchingRoomQueue.push(new roomData(roomId,[playerIndex,null],gameId));
+        } else {
+            let roomId = userId; //To do : I dont know what to set here.
+            let gameId = userId; //To do : I dont know what to set here.
+            matchingRoomQueue.push(new roomData(roomId, [playerIndex, null], gameId));
             socket.join(roomId);
             socket.emit('waiting_for_matching');
             console.log('waiting for matching, current mathching roomList');
@@ -221,15 +223,15 @@ io.on('connection', socket => {
         }
     })
 
-    socket.on('cancel_matching',(userId)=>{
-        let room = matchingRoomQueue.find(item =>{return item.playerIndicies.includes(playerIndex)});
-        if (room != null){
+    socket.on('cancel_matching', (userId) => {
+        let room = matchingRoomQueue.find(item => { return item.playerIndicies.includes(playerIndex) });
+        if (room != null) {
             let roomId = room.roomId;
             socket.leave(roomId);
-            matchingRoomQueue = matchingRoomQueue.filter(room =>{
-                if(!(room.playerIndicies.includes(playerIndex)))return true;
+            matchingRoomQueue = matchingRoomQueue.filter(room => {
+                if (!(room.playerIndicies.includes(playerIndex))) return true;
             })
-            console.log('player '+userId+'cancel matching, current mathching roomList');
+            console.log('player ' + userId + 'cancel matching, current mathching roomList');
             console.log(matchingRoomQueue);
         }
     })
@@ -239,7 +241,7 @@ io.on('connection', socket => {
     socket.on('start', (data) => {
         let update = getUser(data.userid);
         if(update.isPlaying == 1){
-            io.emit('start', {
+            io.to(update.room).emit('start', {
                 isPlaying: update.isPlaying,
                 roomid: update.room,
                 myturn: update.myturn,
@@ -250,8 +252,9 @@ io.on('connection', socket => {
                 s3: update.s3
             });
         }
+
         if(update.isPlaying == 2){
-            io.emit('start', {
+            io.to(update.room).emit('start', {
                 isPlaying: update.isPlaying,
                 roomid: update.room,
                 myturn: update.myturn,
@@ -265,83 +268,83 @@ io.on('connection', socket => {
     })
 
     socket.on('placeStone', (data) => {
-        console.log('placeStone',data);
+        console.log('placeStone', data);
         let update = getUserRoom(data.roomid);
         for (let i = 0; i < update.length; i++) {
-            if(data.currentClass == 'x'){
+            if (data.currentClass == 'x') {
                 update[i].x.push(data.index);
                 updateUser(update[i]);
             }
 
-            if(data.currentClass == 'o'){
+            if (data.currentClass == 'o') {
                 update[i].o.push(data.index);
                 updateUser(update[i]);
             }
         }
-        io.emit('placeStone', data);
+        io.to(data.roomid).emit('placeStone', data);
     });
 
     socket.on('swapTurns', (data) => {
         let update = getUserRoom(data.roomid);
         for (let i = 0; i < update.length; i++) {
-            if(update[i].myturn == true){
+            if (update[i].myturn == true) {
                 update[i].myturn = false;
                 updateUser(update[i]);
-            }else{
+            } else {
                 update[i].myturn = true;
                 updateUser(update[i]);
             }
         }
-        io.emit('swapTurns', data);
+        io.to(data.roomid).emit('swapTurns', data);
     });
 
     socket.on('win', (data) => {
-        io.emit('win', data);
+        io.to(data.roomid).emit('win', data);
     });
 
     socket.on('draw', (data) => {
-        io.emit('draw', data);
+        io.to(data.roomid).emit('draw', data);
     });
 
     socket.on('randAdd', (data) => {
         let update = getUserRoom(data.roomid);
         for (let i = 0; i < update.length; i++) {
-            if(data.currentClass == 'x'){
+            if (data.currentClass == 'x') {
                 update[i].x.push(data.index);
-                if(update[i].isPlaying == 1){
+                if (update[i].isPlaying == 1) {
                     update[i].s1 -= 1;
                 }
 
-            }else if(data.currentClass == 'o'){
+            } else if (data.currentClass == 'o') {
                 update[i].o.push(data.index);
-                if(update[i].isPlaying == 2){
+                if (update[i].isPlaying == 2) {
                     update[i].s1 -= 1;
                 }
             }
             updateUser(update[i]);
         }
-        io.emit('randAdd', data);
+        io.to(data.roomid).emit('randAdd', data);
     });
 
     socket.on('randRem', (data) => {
         let update = getUserRoom(data.roomid);
         for (let i = 0; i < update.length; i++) {
-            if(data.opponentClass == 'x' ){
+            if (data.opponentClass == 'x') {
                 for (let j = 0; j < update[i].x.length; j++) {
-                    if(update[i].x[j] == data.index){
+                    if (update[i].x[j] == data.index) {
                         update[i].x.splice(j, 1);
                     }
                 }
-                if(update[i].isPlaying == 2){
+                if (update[i].isPlaying == 2) {
                     update[i].s2 -= 1;
                 }
-            }else if(data.opponentClass == 'o'){
+            } else if (data.opponentClass == 'o') {
                 for (let j = 0; j < update[i].o.length; j++) {
-                    if(update[i].o[j] == data.index){
+                    if (update[i].o[j] == data.index) {
                         update[i].o.splice(j, 1);
                     }
                 }
-                if(update[i].isPlaying == 1){
+                if (update[i].isPlaying == 1) {
                     update[i].s2 -= 1;
                 }
             }
@@ -349,29 +352,29 @@ io.on('connection', socket => {
 
 
         }
-        io.emit('randRem', data);
+        io.to(data.roomid).emit('randRem', data);
     });
 
     //someone use invisible
     socket.on('invisible', (data) => {
         let update = getUserRoom(data.roomid);
         for (let i = 0; i < update.length; i++) {
-            if(data.color == "black" && update[i].isPlaying == 1){
+            if (data.color == "black" && update[i].isPlaying == 1) {
                 update[i].s3 -= 1;
                 updateUser(update[i]);
             }
 
-            if(data.color == "white" && update[i].isPlaying == 2){
+            if (data.color == "white" && update[i].isPlaying == 2) {
                 update[i].s3 -= 1;
                 updateUser(update[i]);
             }
         }
-        io.emit('invisible', data);
+        io.to(data.roomid).emit('invisible', data);
     });
 
     //draw and update status for both player
     socket.on('drawPoint', (data) => {
-        console.log('drawPoint',data);
+        console.log('drawPoint', data);
         let update = getUser(data.userid);
         update.point += 1;
         update.room = "";
@@ -392,7 +395,7 @@ io.on('connection', socket => {
     socket.on('winPoint', (data) => {
         let update = getUserRoom(data.roomid);
         for (let i = 0; i < update.length; i++) {
-            if(data.userid == update[i].id){
+            if (data.userid == update[i].id) {
                 update[i].point += 2;
                 update[i].wins += 1;
             }
@@ -483,13 +486,13 @@ io.on('connection', socket => {
             }
         }
         //send feedback
-        if(user.length == 0){
+        if (user.length == 0) {
             console.log("User not exist");
             return;
         }
         return user;
     }
-//-------------------------------PROFILE----------------------------------------------------------
+    //-------------------------------PROFILE----------------------------------------------------------
     socket.on('profile', (data) => {
         const fs = require('fs');
         //check if file exist
@@ -507,12 +510,12 @@ io.on('connection', socket => {
             if (users.user[i].id === data) {
                 //send feedback
                 for (let j = 0; j < users.user.length; j++) {
-                    if(users.user[i].point < users.user[j].point){
+                    if (users.user[i].point < users.user[j].point) {
                         rank += 1;
                     }
                 }
                 let winrate = users.user[i].wins / users.user[i].total;
-                io.emit('profile', {userid: users.user[i].id, wins: users.user[i].wins, rate: winrate, ranking: rank});
+                io.emit('profile', { userid: users.user[i].id, wins: users.user[i].wins, rate: winrate, ranking: rank });
                 return;
             }
         }
@@ -526,7 +529,7 @@ io.on('connection', socket => {
 
 //-----------------------------------FUNCTION--------------------------------------------------
 function gamestart(room) {
-    io.emit('gamestart', room);
+    io.to(room).emit('gamestart', room);
 }
 
 function clearRoomData(room) {
@@ -539,4 +542,3 @@ function clearRoomData(room) {
     roomCounter--;
     //console.log('clearRoomData_after',roomIDs);
 }
-
